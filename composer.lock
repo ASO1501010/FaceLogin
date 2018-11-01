@@ -3043,6 +3043,54 @@
             ],
             "time": "2018-07-03T15:46:29+00:00"
         }
+        {
+            "name": "sters/cakephp3-aws-s3-datasource",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sters/cakephp3-aws-s3-datasource.git",
+                "reference": "5cdcebae7074d75ab619d4430547e36a9e8f6f27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sters/cakephp3-aws-s3-datasource/zipball/5cdcebae7074d75ab619d4430547e36a9e8f6f27",
+                "reference": "5cdcebae7074d75ab619d4430547e36a9e8f6f27",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "~3.18"
+            },
+            "require-dev": {
+                "cakephp/cakephp": "~3.2",
+                "cakephp/cakephp-codesniffer": "dev-master",
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~5.6"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "CakeS3\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "sters"
+                }
+            ],
+            "description": "AWS S3 datasource in CakePHP3",
+            "homepage": "https://github.com/sters/cakephp3-aws-s3-datasource",
+            "keywords": [
+                "aws",
+                "cakephp3",
+                "datasource",
+                "s3"
+            ],
+            "time": "2018-05-12T06:19:16+00:00"
+        }
     ],
     "aliases": [],
     "minimum-stability": "stable",
