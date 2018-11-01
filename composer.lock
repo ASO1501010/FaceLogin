@@ -3095,6 +3095,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "sters/cakephp3-aws-s3-datasource": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,
