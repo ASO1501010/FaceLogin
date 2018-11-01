@@ -3042,7 +3042,7 @@
                 "view"
             ],
             "time": "2018-07-03T15:46:29+00:00"
-        }
+        },
         {
             "name": "sters/cakephp3-aws-s3-datasource",
             "version": "dev-master",
