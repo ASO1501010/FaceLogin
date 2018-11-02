@@ -20,6 +20,13 @@ return [
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
         ],
+        's3' => [
+            'className'  => 'CakeS3\Datasource\Connection',
+            'key'        => 'AKIATOEXG6DV2FRC7XQG',
+            'secret'     => '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',
+            'bucketName' => 'login-faces',
+            'region'     => 'us-east-1',
+        ],
     ],
     'EmailTransport' => [
         'default' => [
