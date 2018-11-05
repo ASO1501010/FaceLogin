@@ -22,8 +22,8 @@ return [
         ],
         's3' => [
             'className'  => 'CakeS3\Datasource\Connection',
-            'key'        => 'AKIATOEXG6DV2FRC7XQG',
-            'secret'     => '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',
+            'key'        => 'AKIAICC6ZQALG747TI2A',
+            'secret'     => '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',
             'bucketName' => 'login-faces',
             'region'     => 'us-east-1',
         ],
