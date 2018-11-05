@@ -81,6 +81,7 @@ class S3ClientComponent extends Component
                 'Key'          => $store_path,
                 'SourceFile'   => $file_path,
             ));
+            $this->log($result);
 
             return $result;
         } catch (S3Exception $e) {
