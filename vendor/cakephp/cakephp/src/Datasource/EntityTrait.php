@@ -805,10 +805,10 @@ trait EntityTrait
      *
      * @param string $property the field to set or check status for
      * @param bool $isDirty true means the property was changed, false means
-     * it was not changed
+     * it was not changed. Defaults to true.
      * @return $this
      */
-    public function setDirty($property, $isDirty)
+    public function setDirty($property, $isDirty = true)
     {
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
@@ -934,7 +934,7 @@ trait EntityTrait
      *
      * ```
      * // Sets the error messages for multiple fields at once
-     * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
+     * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
      * @param array $fields The array of errors to set.
@@ -943,11 +943,27 @@ trait EntityTrait
      */
     public function setErrors(array $fields, $overwrite = false)
     {
+        if ($overwrite) {
+            foreach ($fields as $f => $error) {
+                $this->_errors[$f] = (array)$error;
+            }
+
+            return $this;
+        }
+
         foreach ($fields as $f => $error) {
             $this->_errors += [$f => []];
-            $this->_errors[$f] = $overwrite ?
-                (array)$error :
-                array_merge($this->_errors[$f], (array)$error);
+
+            // String messages are appended to the list,
+            // while more complex error structures need their
+            // keys preserved for nested validator.
+            if (is_string($error)) {
+                $this->_errors[$f][] = $error;
+            } else {
+                foreach ($error as $k => $v) {
+                    $this->_errors[$f][$k] = $v;
+                }
+            }
         }
 
         return $this;
@@ -960,7 +976,7 @@ trait EntityTrait
      *
      * ```
      * // Sets the error messages for a single field
-     * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
+     * $entity->setError('salary', ['must be numeric', 'must be a positive number']);
      * ```
      *
      * @param string $field The field to get errors for, or the array of errors to set.
@@ -1077,7 +1093,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
+     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1356,7 +1372,7 @@ trait EntityTrait
             get_called_class() . '::source() is deprecated. ' .
             'Use setSource()/getSource() instead.'
         );
-        if (is_null($alias)) {
+        if ($alias === null) {
             return $this->getSource();
         }
 

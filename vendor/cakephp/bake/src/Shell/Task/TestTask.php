@@ -12,6 +12,7 @@
  * @since         0.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Bake\Shell\Task;
 
 use Cake\Console\Shell;
@@ -60,6 +61,7 @@ class TestTask extends BakeTask
         'Cell' => 'View\Cell',
         'Form' => 'Form',
         'Mailer' => 'Mailer',
+        'Command' => 'Command',
     ];
 
     /**
@@ -80,6 +82,7 @@ class TestTask extends BakeTask
         'Cell' => 'Cell',
         'Form' => 'Form',
         'Mailer' => 'Mailer',
+        'Command' => 'Command',
     ];
 
     /**
@@ -100,6 +103,7 @@ class TestTask extends BakeTask
     {
         parent::main();
         $type = $this->normalize($type);
+        $name = $this->_getName($name);
 
         if (empty($type) && empty($name)) {
             $this->outputTypeChoices();
@@ -315,10 +319,10 @@ class TestTask extends BakeTask
             if ($this->plugin) {
                 $name = $this->plugin . '.' . $name;
             }
-            if (TableRegistry::exists($name)) {
-                $instance = TableRegistry::get($name);
+            if (TableRegistry::getTableLocator()->exists($name)) {
+                $instance = TableRegistry::getTableLocator()->get($name);
             } else {
-                $instance = TableRegistry::get($name, [
+                $instance = TableRegistry::getTableLocator()->get($name, [
                     'connectionName' => $this->connection
                 ]);
             }
@@ -516,8 +520,8 @@ class TestTask extends BakeTask
         $pre = $construct = $post = '';
         if ($type === 'Table') {
             $tableName = str_replace('Table', '', $className);
-            $pre = "\$config = TableRegistry::exists('{$tableName}') ? [] : ['className' => {$className}::class];";
-            $construct = "TableRegistry::get('{$tableName}', \$config);";
+            $pre = "\$config = TableRegistry::getTableLocator()->exists('{$tableName}') ? [] : ['className' => {$className}::class];";
+            $construct = "TableRegistry::getTableLocator()->get('{$tableName}', \$config);";
         }
         if ($type === 'Behavior' || $type === 'Entity' || $type === 'Form') {
             $construct = "new {$className}();";
@@ -525,6 +529,9 @@ class TestTask extends BakeTask
         if ($type === 'Helper') {
             $pre = "\$view = new View();";
             $construct = "new {$className}(\$view);";
+        }
+        if ($type === 'Command') {
+            $construct = "\$this->useCommandRunner();";
         }
         if ($type === 'Component') {
             $pre = "\$registry = new ComponentRegistry();";
@@ -535,10 +542,8 @@ class TestTask extends BakeTask
             $construct = "new {$className}(\$this->io);";
         }
         if ($type === 'Task') {
-            $pre = "\$this->io = \$this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();\n";
-            $construct = "\$this->getMockBuilder('{$fullClassName}')\n";
-            $construct .= "            ->setConstructorArgs([\$this->io])\n";
-            $construct .= "            ->getMock();";
+            $pre = "\$this->io = \$this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();";
+            $construct = "new {$className}(\$this->io);";
         }
         if ($type === 'Cell') {
             $pre = "\$this->request = \$this->getMockBuilder('Cake\Http\ServerRequest')->getMock();\n";
@@ -609,7 +614,7 @@ class TestTask extends BakeTask
                 break;
         }
 
-        if ($type !== 'Controller') {
+        if (!in_array($type, ['Controller', 'Command'])) {
             $properties[] = [
                 'description' => 'Test subject',
                 'type' => '\\' . $fullClassName,

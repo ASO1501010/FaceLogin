@@ -14,9 +14,12 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Router;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
@@ -52,18 +55,91 @@ class MiddlewareDispatcher
     protected $_constructorArgs;
 
     /**
+     * Allow router reloading to be disabled.
+     *
+     * @var bool
+     */
+    protected $_disableRouterReload = false;
+
+    /**
+     * The application that is being dispatched.
+     *
+     * @var \Cake\Core\HttpApplicationInterface
+     */
+    protected $app;
+
+    /**
      * Constructor
      *
      * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
+     * @param bool $disableRouterReload Disable Router::reload() call.
+     * @throws \LogicException If it cannot load class for use in integration testing.
      */
-    public function __construct($test, $class = null, $constructorArgs = null)
+    public function __construct($test, $class = null, $constructorArgs = null, $disableRouterReload = false)
     {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
+        $this->_disableRouterReload = $disableRouterReload;
+
+        try {
+            $reflect = new ReflectionClass($this->_class);
+            /** @var \Cake\Core\HttpApplicationInterface $app */
+            $app = $reflect->newInstanceArgs($this->_constructorArgs);
+            $this->app = $app;
+        } catch (ReflectionException $e) {
+            throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
+        }
+    }
+
+    /**
+     * Resolve the provided URL into a string.
+     *
+     * @param array|string $url The URL array/string to resolve.
+     * @return string
+     */
+    public function resolveUrl($url)
+    {
+        // If we need to resolve a Route URL but there are no routes, load routes.
+        if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
+            return $this->resolveRoute($url);
+        }
+
+        return Router::url($url);
+    }
+
+    /**
+     * Convert a URL array into a string URL via routing.
+     *
+     * @param array $url The url to resolve
+     * @return string
+     */
+    protected function resolveRoute(array $url)
+    {
+        // Simulate application bootstrap and route loading.
+        // We need both to ensure plugins are loaded.
+        $this->app->bootstrap();
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginBootstrap();
+        }
+        $builder = Router::createRouteBuilder('/');
+
+        if ($this->app instanceof HttpApplicationInterface) {
+            $this->app->routes($builder);
+        }
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
+
+        $out = Router::url($url);
+        if (!$this->_disableRouterReload) {
+            Router::reload();
+        }
+
+        return $out;
     }
 
     /**
@@ -74,16 +150,6 @@ class MiddlewareDispatcher
      */
     public function execute($request)
     {
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf(
-                'Cannot load "%s" for use in integration testing.',
-                $this->_class
-            ));
-        }
-
         // Spy on the controller using the initialize hook instead
         // of the dispatcher hooks as those will be going away one day.
         EventManager::instance()->on(
@@ -91,7 +157,7 @@ class MiddlewareDispatcher
             [$this->_test, 'controllerSpy']
         );
 
-        $server = new Server($app);
+        $server = new Server($this->app);
         $psrRequest = $this->_createRequest($request);
 
         return $server->run($psrRequest);
@@ -108,8 +174,12 @@ class MiddlewareDispatcher
         if (isset($spec['input'])) {
             $spec['post'] = [];
         }
+        $environment = array_merge(
+            array_merge($_SERVER, ['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/']),
+            $spec['environment']
+        );
         $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
+            $environment,
             $spec['query'],
             $spec['post'],
             $spec['cookies']

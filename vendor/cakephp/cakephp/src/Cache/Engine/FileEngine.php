@@ -336,6 +336,8 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
+        $dir->close();
     }
 
     /**
@@ -413,7 +415,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Determine is cache directory is writable
+     * Determine if cache directory is writable
      *
      * @return bool
      */

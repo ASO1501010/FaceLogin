@@ -79,7 +79,8 @@ class ShowCommand extends BaseCommand
                 new InputOption('strict', null, InputOption::VALUE_NONE, 'Return a non-zero exit code when there are outdated packages'),
                 new InputOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format of the output: text or json', 'text'),
             ))
-            ->setHelp(<<<EOT
+            ->setHelp(
+                <<<EOT
 The show command displays detailed information about a package, or
 lists all packages available.
 
@@ -114,6 +115,12 @@ EOT
 
         if ($input->getOption('tree') && ($input->getOption('all') || $input->getOption('available'))) {
             $io->writeError('The --tree (-t) option is not usable in combination with --all or --available (-a)');
+
+            return 1;
+        }
+
+        if ($input->getOption('tree') && $input->getOption('latest')) {
+            $io->writeError('The --tree (-t) option is not usable in combination with --latest (-l)');
 
             return 1;
         }
@@ -178,9 +185,6 @@ EOT
 
         // show single package or single version
         if (($packageFilter && false === strpos($packageFilter, '*')) || !empty($package)) {
-            if ('json' === $format) {
-                $io->writeError('Format "json" is only supported for package listings, falling back to format "text"');
-            }
             if (empty($package)) {
                 list($package, $versions) = $this->getPackage($installedRepo, $repos, $input->getArgument('package'), $input->getArgument('version'));
 
@@ -200,7 +204,13 @@ EOT
 
             $exitCode = 0;
             if ($input->getOption('tree')) {
-                $this->displayPackageTree($package, $installedRepo, $repos);
+                $arrayTree = $this->generatePackageTree($package, $installedRepo, $repos);
+
+                if ('json' === $format) {
+                    $io->write(JsonFile::encode(array('installed' => array($arrayTree))));
+                } else {
+                    $this->displayPackageTree(array($arrayTree));
+                }
             } else {
                 $latestPackage = null;
                 if ($input->getOption('latest')) {
@@ -208,6 +218,12 @@ EOT
                 }
                 if ($input->getOption('outdated') && $input->getOption('strict') && $latestPackage && $latestPackage->getFullPrettyVersion() !== $package->getFullPrettyVersion() && !$latestPackage->isAbandoned()) {
                     $exitCode = 1;
+                }
+                if ($input->getOption('path')) {
+                    $io->write($package->getName(), false);
+                    $io->write(' ' . strtok(realpath($composer->getInstallationManager()->getInstallPath($package)), "\r\n"));
+
+                    return $exitCode;
                 }
                 $this->printMeta($package, $versions, $installedRepo, $latestPackage ?: null);
                 $this->printLinks($package, 'requires');
@@ -228,16 +244,20 @@ EOT
 
         // show tree view if requested
         if ($input->getOption('tree')) {
-            if ('json' === $format) {
-                $io->writeError('Format "json" is only supported for package listings, falling back to format "text"');
-            }
             $rootRequires = $this->getRootRequires();
             $packages = $installedRepo->getPackages();
             usort($packages, 'strcmp');
+            $arrayTree = array();
             foreach ($packages as $package) {
                 if (in_array($package->getName(), $rootRequires, true)) {
-                    $this->displayPackageTree($package, $installedRepo, $repos);
+                    $arrayTree[] = $this->generatePackageTree($package, $installedRepo, $repos);
                 }
+            }
+
+            if ('json' === $format) {
+                $io->write(JsonFile::encode(array('installed' => $arrayTree)));
+            } else {
+                $this->displayPackageTree($arrayTree);
             }
 
             return 0;
@@ -383,7 +403,7 @@ EOT
                         }
 
                         if ($latestPackage && $latestPackage->isAbandoned()) {
-                            $replacement = (is_string($latestPackage->getReplacementPackage()))
+                            $replacement = is_string($latestPackage->getReplacementPackage())
                                 ? 'Use ' . $latestPackage->getReplacementPackage() . ' instead'
                                 : 'No replacement was suggested';
                             $packageWarning = sprintf(
@@ -563,6 +583,9 @@ EOT
         $this->printLicenses($package);
         $io->write('<info>source</info>   : ' . sprintf('[%s] <comment>%s</comment> %s', $package->getSourceType(), $package->getSourceUrl(), $package->getSourceReference()));
         $io->write('<info>dist</info>     : ' . sprintf('[%s] <comment>%s</comment> %s', $package->getDistType(), $package->getDistUrl(), $package->getDistReference()));
+        if ($installedRepo->hasPackage($package)) {
+            $io->write('<info>path</info>     : ' . sprintf('%s', realpath($this->getComposer()->getInstallationManager()->getInstallPath($package))));
+        }
         $io->write('<info>names</info>    : ' . implode(', ', $package->getNames()));
 
         if ($latestPackage->isAbandoned()) {
@@ -706,40 +729,144 @@ EOT
     /**
      * Display the tree
      *
-     * @param PackageInterface|string $package
-     * @param RepositoryInterface     $installedRepo
-     * @param RepositoryInterface     $distantRepos
+     * @param $arrayTree
      */
-    protected function displayPackageTree(PackageInterface $package, RepositoryInterface $installedRepo, RepositoryInterface $distantRepos)
+    protected function displayPackageTree(array $arrayTree)
     {
         $io = $this->getIO();
-        $io->write(sprintf('<info>%s</info>', $package->getPrettyName()), false);
-        $io->write(' ' . $package->getPrettyVersion(), false);
-        $io->write(' ' . strtok($package->getDescription(), "\r\n"));
+        foreach ($arrayTree as $package) {
+            $io->write(sprintf('<info>%s</info>', $package['name']), false);
+            $io->write(' ' . $package['version'], false);
+            $io->write(' ' . strtok($package['description'], "\r\n"));
 
+            if (isset($package['requires'])) {
+                $requires = $package['requires'];
+                $treeBar = '├';
+                $j = 0;
+                $total = count($requires);
+                foreach ($requires as $require) {
+                    $requireName = $require['name'];
+                    $j++;
+                    if ($j === $total) {
+                        $treeBar = '└';
+                    }
+                    $level = 1;
+                    $color = $this->colors[$level];
+                    $info = sprintf(
+                        '%s──<%s>%s</%s> %s',
+                        $treeBar,
+                        $color,
+                        $requireName,
+                        $color,
+                        $require['version']
+                    );
+                    $this->writeTreeLine($info);
+
+                    $treeBar = str_replace('└', ' ', $treeBar);
+                    $packagesInTree = array($package['name'], $requireName);
+
+                    $this->displayTree($require, $packagesInTree, $treeBar, $level + 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Generate the package tree
+     *
+     * @param  PackageInterface|string $package
+     * @param  RepositoryInterface     $installedRepo
+     * @param  RepositoryInterface     $distantRepos
+     * @return array
+     */
+    protected function generatePackageTree(
+        PackageInterface $package,
+        RepositoryInterface $installedRepo,
+        RepositoryInterface $distantRepos
+    ) {
         if (is_object($package)) {
             $requires = $package->getRequires();
             ksort($requires);
-            $treeBar = '├';
-            $j = 0;
-            $total = count($requires);
+            $children = array();
             foreach ($requires as $requireName => $require) {
-                $j++;
-                if ($j == 0) {
-                    $this->writeTreeLine($treeBar);
+                $packagesInTree = array($package->getName(), $requireName);
+
+                $treeChildDesc = array(
+                    'name' => $requireName,
+                    'version' => $require->getPrettyConstraint(),
+                );
+
+                $deepChildren = $this->addTree($requireName, $require, $installedRepo, $distantRepos, $packagesInTree);
+
+                if ($deepChildren) {
+                    $treeChildDesc['requires'] = $deepChildren;
                 }
-                if ($j == $total) {
-                    $treeBar = '└';
+
+                $children[] = $treeChildDesc;
+            }
+            $tree = array(
+                'name' => $package->getPrettyName(),
+                'version' => $package->getPrettyVersion(),
+                'description' => $package->getDescription(),
+            );
+
+            if ($children) {
+                $tree['requires'] = $children;
+            }
+
+            return $tree;
+        }
+    }
+
+    /**
+     * Display a package tree
+     *
+     * @param PackageInterface|string $package
+     * @param array                   $packagesInTree
+     * @param string                  $previousTreeBar
+     * @param int                     $level
+     */
+    protected function displayTree(
+        $package,
+        array $packagesInTree,
+        $previousTreeBar = '├',
+        $level = 1
+    ) {
+        $previousTreeBar = str_replace('├', '│', $previousTreeBar);
+        if (isset($package['requires'])) {
+            $requires = $package['requires'];
+            $treeBar = $previousTreeBar . '  ├';
+            $i = 0;
+            $total = count($requires);
+            foreach ($requires as $require) {
+                $currentTree = $packagesInTree;
+                $i++;
+                if ($i === $total) {
+                    $treeBar = $previousTreeBar . '  └';
                 }
-                $level = 1;
-                $color = $this->colors[$level];
-                $info = sprintf('%s──<%s>%s</%s> %s', $treeBar, $color, $requireName, $color, $require->getPrettyConstraint());
+                $colorIdent = $level % count($this->colors);
+                $color = $this->colors[$colorIdent];
+
+                $circularWarn = in_array(
+                    $require['name'],
+                    $currentTree,
+                    true
+                ) ? '(circular dependency aborted here)' : '';
+                $info = rtrim(sprintf(
+                    '%s──<%s>%s</%s> %s %s',
+                    $treeBar,
+                    $color,
+                    $require['name'],
+                    $color,
+                    $require['version'],
+                    $circularWarn
+                ));
                 $this->writeTreeLine($info);
 
                 $treeBar = str_replace('└', ' ', $treeBar);
-                $packagesInTree = array($package->getName(), $requireName);
 
-                $this->displayTree($requireName, $require, $installedRepo, $distantRepos, $packagesInTree, $treeBar, $level + 1);
+                $currentTree[] = $require['name'];
+                $this->displayTree($require, $currentTree, $treeBar, $level + 1);
             }
         }
     }
@@ -747,44 +874,51 @@ EOT
     /**
      * Display a package tree
      *
-     * @param string                  $name
-     * @param PackageInterface|string $package
-     * @param RepositoryInterface     $installedRepo
-     * @param RepositoryInterface     $distantRepos
-     * @param array                   $packagesInTree
-     * @param string                  $previousTreeBar
-     * @param int                     $level
+     * @param  string                  $name
+     * @param  PackageInterface|string $package
+     * @param  RepositoryInterface     $installedRepo
+     * @param  RepositoryInterface     $distantRepos
+     * @param  array                   $packagesInTree
+     * @return array
      */
-    protected function displayTree($name, $package, RepositoryInterface $installedRepo, RepositoryInterface $distantRepos, array $packagesInTree, $previousTreeBar = '├', $level = 1)
-    {
-        $previousTreeBar = str_replace('├', '│', $previousTreeBar);
-        list($package, $versions) = $this->getPackage($installedRepo, $distantRepos, $name, $package->getPrettyConstraint() === 'self.version' ? $package->getConstraint() : $package->getPrettyConstraint());
+    protected function addTree(
+        $name,
+        $package,
+        RepositoryInterface $installedRepo,
+        RepositoryInterface $distantRepos,
+        array $packagesInTree
+    ) {
+        $children = array();
+        list($package, $versions) = $this->getPackage(
+            $installedRepo,
+            $distantRepos,
+            $name,
+            $package->getPrettyConstraint() === 'self.version' ? $package->getConstraint() : $package->getPrettyConstraint()
+        );
         if (is_object($package)) {
             $requires = $package->getRequires();
             ksort($requires);
-            $treeBar = $previousTreeBar . '  ├';
-            $i = 0;
-            $total = count($requires);
             foreach ($requires as $requireName => $require) {
                 $currentTree = $packagesInTree;
-                $i++;
-                if ($i == $total) {
-                    $treeBar = $previousTreeBar . '  └';
-                }
-                $colorIdent = $level % count($this->colors);
-                $color = $this->colors[$colorIdent];
 
-                $circularWarn = in_array($requireName, $currentTree) ? '(circular dependency aborted here)' : '';
-                $info = rtrim(sprintf('%s──<%s>%s</%s> %s %s', $treeBar, $color, $requireName, $color, $require->getPrettyConstraint(), $circularWarn));
-                $this->writeTreeLine($info);
+                $treeChildDesc = array(
+                    'name' => $requireName,
+                    'version' => $require->getPrettyConstraint(),
+                );
 
-                $treeBar = str_replace('└', ' ', $treeBar);
-                if (!in_array($requireName, $currentTree)) {
+                if (!in_array($requireName, $currentTree, true)) {
                     $currentTree[] = $requireName;
-                    $this->displayTree($requireName, $require, $installedRepo, $distantRepos, $currentTree, $treeBar, $level + 1);
+                    $deepChildren = $this->addTree($requireName, $require, $installedRepo, $distantRepos, $currentTree);
+                    if ($deepChildren) {
+                        $treeChildDesc['requires'] = $deepChildren;
+                    }
                 }
+
+                $children[] = $treeChildDesc;
             }
         }
+
+        return $children;
     }
 
     private function updateStatusToVersionStyle($updateStatus)

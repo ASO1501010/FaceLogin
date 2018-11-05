@@ -11,6 +11,7 @@
  */
 
 namespace Composer\DependencyResolver;
+
 use Composer\Package\CompletePackageInterface;
 
 /**
@@ -247,6 +248,6 @@ class Problem
      */
     protected function constraintToText($constraint)
     {
-        return ($constraint) ? ' '.$constraint->getPrettyString() : '';
+        return $constraint ? ' '.$constraint->getPrettyString() : '';
     }
 }

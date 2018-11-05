@@ -347,7 +347,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Constructor
      *
-     * @param array|string|null $config Array of configs, or string to load configs from email.php
+     * @param array|string|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct($config = null)
     {
@@ -1205,10 +1205,10 @@ class Email implements JsonSerializable, Serializable
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
-            } else {
-                $headers['Message-ID'] = $this->_messageId;
+                $this->_messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             }
+
+            $headers['Message-ID'] = $this->_messageId;
         }
 
         if ($this->_priority) {
@@ -1833,7 +1833,7 @@ class Email implements JsonSerializable, Serializable
                     $name = basename($fileInfo['file']);
                 }
             }
-            if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
+            if (!isset($fileInfo['mimetype']) && isset($fileInfo['file']) && function_exists('mime_content_type')) {
                 $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
@@ -2218,20 +2218,20 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
      * @param string|array|null $message String with message or array with variables to be used in render
-     * @param string|array $transportConfig String to use config from EmailConfig or array with configs
+     * @param string|array $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return static Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
-    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
+    public static function deliver($to = null, $subject = null, $message = null, $config = 'default', $send = true)
     {
         $class = __CLASS__;
 
-        if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
-            $transportConfig['transport'] = 'default';
+        if (is_array($config) && !isset($config['transport'])) {
+            $config['transport'] = 'default';
         }
         /* @var \Cake\Mailer\Email $instance */
-        $instance = new $class($transportConfig);
+        $instance = new $class($config);
         if ($to !== null) {
             $instance->setTo($to);
         }
@@ -2432,7 +2432,7 @@ class Email implements JsonSerializable, Serializable
             if (!preg_match('/<[a-z]+.*>/i', $line)) {
                 $formatted = array_merge(
                     $formatted,
-                    explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
+                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
                 );
                 continue;
             }
@@ -2453,7 +2453,7 @@ class Email implements JsonSerializable, Serializable
                             if ($tmpLineLength > 0) {
                                 $formatted = array_merge(
                                     $formatted,
-                                    explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;

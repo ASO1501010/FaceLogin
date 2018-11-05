@@ -120,8 +120,6 @@ class Plugin
             return;
         }
 
-        static::_loadConfig();
-
         $config += [
             'autoload' => false,
             'bootstrap' => false,
@@ -133,31 +131,21 @@ class Plugin
         ];
 
         if (!isset($config['path'])) {
-            $config['path'] = Configure::read('plugins.' . $plugin);
-        }
-
-        if (empty($config['path'])) {
-            $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
-            foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
-                    break;
-                }
-            }
-        }
-
-        if (empty($config['path'])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
+            $config['path'] = static::getCollection()->findPath($plugin);
         }
 
         $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
         if (!isset($config['configPath'])) {
             $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
-
-        // Use stub plugins as this method will be removed long term.
-        static::getCollection()->add(new BasePlugin($config));
+        $pluginClass = str_replace('/', '\\', $plugin) . '\\Plugin';
+        if (class_exists($pluginClass)) {
+            $instance = new $pluginClass($config);
+        } else {
+            // Use stub plugin as this method will be removed long term.
+            $instance = new BasePlugin($config);
+        }
+        static::getCollection()->add($instance);
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
@@ -177,30 +165,6 @@ class Plugin
         if ($config['bootstrap'] === true) {
             static::bootstrap($plugin);
         }
-    }
-
-    /**
-     * Load the plugin path configuration file.
-     *
-     * @return void
-     */
-    protected static function _loadConfig()
-    {
-        if (Configure::check('plugins')) {
-            return;
-        }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
-                Configure::write(['plugins' => []]);
-
-                return;
-            }
-        }
-
-        $config = require $vendorFile;
-        Configure::write($config);
     }
 
     /**
@@ -227,7 +191,6 @@ class Plugin
      */
     public static function loadAll(array $options = [])
     {
-        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
@@ -332,9 +295,16 @@ class Plugin
      * @param string|null $name name of the plugin, if null will operate on all
      *   plugins having enabled the loading of routes files.
      * @return bool
+     * @deprecated 3.6.5 This method is no longer needed when using HttpApplicationInterface based applications.
+     *   This method will be removed in 4.0.0
      */
     public static function routes($name = null)
     {
+        deprecationWarning(
+            'You no longer need to call `Plugin::routes()` after upgrading to use Http\Server. ' .
+            'See https://book.cakephp.org/3.0/en/development/application.html#adding-the-new-http-stack-to-an-existing-application ' .
+            'for upgrade information.'
+        );
         if ($name === null) {
             foreach (static::loaded() as $p) {
                 static::routes($p);

@@ -173,6 +173,13 @@ abstract class IntegrationTestCase extends TestCase
     protected $_cookieEncryptionKey;
 
     /**
+     * Allow router reloading to be disabled.
+     *
+     * @var bool
+     */
+    protected $_disableRouterReload = false;
+
+    /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
      * @return void
@@ -207,6 +214,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
         $this->_useHttpServer = false;
+        $this->_disableRouterReload = true;
     }
 
     /**
@@ -368,6 +376,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function get($url)
     {
@@ -384,6 +393,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function post($url, $data = [])
     {
@@ -400,6 +410,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function patch($url, $data = [])
     {
@@ -416,6 +427,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function put($url, $data = [])
     {
@@ -431,6 +443,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function delete($url)
     {
@@ -446,6 +459,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function head($url)
     {
@@ -461,6 +475,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function options($url)
     {
@@ -476,11 +491,13 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
-     * @throws \Exception
+     * @throws \PHPUnit\Exception
      */
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $url = $dispatcher->resolveUrl($url);
+
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -509,7 +526,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _makeDispatcher()
     {
         if ($this->_useHttpServer) {
-            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
+            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs, $this->_disableRouterReload);
         }
 
         return new LegacyRequestDispatcher($this);
@@ -535,7 +552,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->request->getSession()->read('Flash');
+                $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {
@@ -596,7 +613,8 @@ abstract class IntegrationTestCase extends TestCase
             $props['input'] = $data;
         }
         if (!isset($props['input'])) {
-            $props['post'] = $this->_addTokens($tokenUrl, $data);
+            $data = $this->_addTokens($tokenUrl, $data);
+            $props['post'] = $this->_castToString($data);
         }
         $props['cookies'] = $this->_cookie;
 
@@ -652,16 +670,45 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Recursively casts all data to string as that is how data would be POSTed in
+     * the real world
+     *
+     * @param array $data POST data
+     * @return array
+     */
+    protected function _castToString($data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_scalar($value)) {
+                $data[$key] = $value === false ? '0' : (string)$value;
+
+                continue;
+            }
+
+            if (is_array($value)) {
+                $looksLikeFile = isset($value['error'], $value['tmp_name'], $value['size']);
+                if ($looksLikeFile) {
+                    continue;
+                }
+
+                $data[$key] = $this->_castToString($value);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Creates a valid request url and parameter array more like Request::_url()
      *
-     * @param string|array $url The URL
+     * @param string $url The URL
      * @return array Qualified URL and the query parameters
      */
     protected function _url($url)
     {
         // re-create URL in ServerRequest's context so
         // query strings are encoded as expected
-        $request = new ServerRequest(['url' => Router::url($url)]);
+        $request = new ServerRequest(['url' => $url]);
         $url = $request->getRequestTarget();
 
         $query = '';

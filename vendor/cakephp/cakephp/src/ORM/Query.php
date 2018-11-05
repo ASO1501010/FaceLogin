@@ -33,6 +33,7 @@ use RuntimeException;
  *
  * @see \Cake\Collection\CollectionInterface For a full description of the collection methods supported by this class
  * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
+ * @method \Cake\Collection\CollectionInterface sortBy($callback, $dir = SORT_DESC, $type = \SORT_NUMERIC) Sorts the query with the callback
  * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
  * @method \Cake\Collection\CollectionInterface reject(callable $c) Removes the results passing the callable test
  * @method bool every(callable $c) Returns true if all the results pass the callable test
@@ -170,13 +171,41 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Adds new fields to be returned by a `SELECT` statement when this query is
+     * executed. Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * If an array is passed, keys will be used to alias fields using the value as the
+     * real field to be aliased. It is possible to alias strings, Expression objects or
+     * even other Query objects.
+     *
+     * If a callable function is passed, the returning array of the function will
+     * be used as the list of fields.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be selected, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->select(['id', 'title']); // Produces SELECT id, title
+     * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+     * $query->select('id', true); // Resets the list: SELECT id
+     * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+     * $query->select(function ($query) {
+     *     return ['article_id', 'total' => $query->count('*')];
+     * })
+     * ```
+     *
+     * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+     * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
+     * from the table.
      *
      * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
+     * @param array|\Cake\Database\ExpressionInterface|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
@@ -1055,10 +1084,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function triggerBeforeFind()
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
-            $table = $this->getRepository();
             $this->_beforeFindFired = true;
-            /* @var \Cake\Event\EventDispatcherInterface $table */
-            $table->dispatchEvent('Model.beforeFind', [
+
+            /** @var \Cake\Event\EventDispatcherInterface $repository */
+            $repository = $this->getRepository();
+            $repository->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
                 !$this->isEagerLoaded()
@@ -1117,11 +1147,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->getAlias() => $this->_repository->getTable()]);
+            $this->from([$repository->getAlias() => $repository->getTable()]);
         }
         $this->_addDefaultFields();
-        $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
+        $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
         $this->_addDefaultSelectTypes();
     }
 
@@ -1136,13 +1169,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $select = $this->clause('select');
         $this->_hasFields = true;
 
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+
         if (!count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
-            $this->select($this->getRepository()->getSchema()->columns());
+            $this->select($repository->getSchema()->columns());
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $this->getRepository()->getAlias());
+        $aliased = $this->aliasFields($select, $repository->getAlias());
         $this->select($aliased, true);
     }
 
@@ -1179,7 +1215,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find($finder, array $options = [])
     {
-        return $this->getRepository()->callFinder($finder, $this, $options);
+        /** @var \Cake\ORM\Table $table */
+        $table = $this->getRepository();
+
+        return $table->callFinder($finder, $this, $options);
     }
 
     /**
@@ -1206,7 +1245,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->getRepository()->getTable();
+        if (!$table) {
+            /** @var \Cake\ORM\Table $repository */
+            $repository = $this->getRepository();
+            $table = $repository->getTable();
+        }
 
         return parent::update($table);
     }
@@ -1222,8 +1265,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete($table = null)
     {
-        $repo = $this->getRepository();
-        $this->from([$repo->getAlias() => $repo->getTable()]);
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+        $this->from([$repository->getAlias() => $repository->getTable()]);
 
         return parent::delete();
     }
@@ -1243,7 +1287,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->getRepository()->getTable();
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+        $table = $repository->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);

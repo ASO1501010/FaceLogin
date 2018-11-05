@@ -29,7 +29,7 @@ trait ViewVarsTrait
     /**
      * The name of default View class.
      *
-     * @var string
+     * @var string|null
      * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
      */
     public $viewClass;
@@ -74,6 +74,7 @@ trait ViewVarsTrait
         $builder = $this->viewBuilder();
         if ($viewClass === null && $builder->getClassName() === null) {
             $builder->setClassName($this->viewClass);
+            $this->viewClass = null;
         }
         if ($viewClass) {
             $builder->setClassName($viewClass);
@@ -88,21 +89,22 @@ trait ViewVarsTrait
         }
 
         $deprecatedOptions = [
-            'layout' => 'layout',
-            'view' => 'template',
-            'theme' => 'theme',
-            'autoLayout' => 'autoLayout',
-            'viewPath' => 'templatePath',
-            'layoutPath' => 'layoutPath',
+            'layout' => 'setLayout',
+            'view' => 'setTemplate',
+            'theme' => 'setTheme',
+            'autoLayout' => 'enableAutoLayout',
+            'viewPath' => 'setTemplatePath',
+            'layoutPath' => 'setLayoutPath',
         ];
         foreach ($deprecatedOptions as $old => $new) {
             if (property_exists($this, $old)) {
                 $builder->{$new}($this->{$old});
-                trigger_error(sprintf(
+                $message = sprintf(
                     'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
                     $old,
                     $new
-                ), E_USER_DEPRECATED);
+                );
+                deprecationWarning($message);
             }
         }
 

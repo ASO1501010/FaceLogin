@@ -15,7 +15,6 @@
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
@@ -125,7 +124,6 @@ class RoutingMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.
-     * @throws \Cake\Routing\InvalidArgumentException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {

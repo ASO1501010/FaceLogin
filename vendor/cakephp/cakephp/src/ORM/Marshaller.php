@@ -248,6 +248,7 @@ class Marshaller
         } elseif (is_string($options['validate'])) {
             $validator = $this->_table->getValidator($options['validate']);
         } elseif (is_object($options['validate'])) {
+            /** @var \Cake\Validation\Validator $validator */
             $validator = $options['validate'];
         }
 
@@ -569,7 +570,7 @@ class Marshaller
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
-        $properties = $marshalledAssocs = [];
+        $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {

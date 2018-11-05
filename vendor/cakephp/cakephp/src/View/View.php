@@ -56,7 +56,7 @@ use RuntimeException;
  * `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
- * @property \Cake\View\Helper\BreadCrumbsHelper $BreadCrumbs
+ * @property \Cake\View\Helper\BreadcrumbsHelper $Breadcrumbs
  * @property \Cake\View\Helper\FlashHelper $Flash
  * @property \Cake\View\Helper\FormHelper $Form
  * @property \Cake\View\Helper\HtmlHelper $Html
@@ -1293,7 +1293,7 @@ class View implements EventDispatcherInterface
         if (strlen($this->subDir)) {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && substr($templatePath, -(strlen($subDir))) == $subDir) {
+            if ($templatePath != $subDir && substr($templatePath, -strlen($subDir)) == $subDir) {
                 $subDir = '';
             }
         }
