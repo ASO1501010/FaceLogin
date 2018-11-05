@@ -29,7 +29,7 @@ class S3ClientComponent extends Component
             'region' => env('AWS_S3_REGION', ''),
             'version' => 'latest',
         ]);
-
+        $this->log(env('AWS_S3_KEY', ''));
         $this->default_bucket = env('AWS_S3_BUCKET', '');
     }
 
