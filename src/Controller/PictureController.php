@@ -32,11 +32,11 @@ class PictureController extends AppController{
         // $result=$this->S3Client->putFile($file_local_path, $file_name);
         $data = file_get_contents("php://input");
         // $fp = fopen("\storage\data.jpg", 'wb');
-        $fp = fopen($this->storage_path."data.jpg", 'wb');
-        fwrite($fp, $data);
+        // $fp = fopen($this->storage_path."data.jpg", 'wb');
+        // fwrite($fp, $data);
         $file_name="data.jpg";
-        $file_local_path=sprintf('%s%s', $this->storage_path, $file_name);
-        $result=$this->S3Client->putFile($file_local_path, $file_name);
+        // $file_local_path=sprintf('%s%s', $this->storage_path, $file_name);
+        $result=$this->S3Client->putFile($data, $file_name);
     }
 
     public function face(){

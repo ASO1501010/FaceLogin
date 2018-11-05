@@ -79,7 +79,8 @@ class S3ClientComponent extends Component
             $result = $this->s3->putObject(array(
                 'Bucket'       => $bucket_name,
                 'Key'          => $store_path,
-                'SourceFile'   => $file_path,
+                'Body'         => $file_path,
+                // 'SourceFile'   => $file_path,
             ));
 
             return $result;
