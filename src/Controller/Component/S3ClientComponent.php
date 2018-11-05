@@ -75,7 +75,7 @@ class S3ClientComponent extends Component
     {
         try {
             if(!$bucket_name) $bucket_name = $this->default_bucket;
-            $this->log($bucket_name);
+            $this->log($file_path);
             $result = $this->s3->putObject(array(
                 'Bucket'       => $bucket_name,
                 'Key'          => $store_path,
