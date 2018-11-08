@@ -29,7 +29,6 @@ class S3ClientComponent extends Component
             'region' => env('AWS_S3_REGION', ''),
             'version' => 'latest',
         ]);
-        $this->log(env('AWS_S3_KEY', ''));
         $this->default_bucket = env('AWS_S3_BUCKET', '');
     }
 
@@ -75,14 +74,12 @@ class S3ClientComponent extends Component
     {
         try {
             if(!$bucket_name) $bucket_name = $this->default_bucket;
-            $this->log($file_path);
             $result = $this->s3->putObject(array(
                 'Bucket'       => $bucket_name,
                 'Key'          => $store_path,
                 'Body'         => $file_path,
                 // 'SourceFile'   => $file_path,
             ));
-            $this->log($result);
 
             return $result;
         } catch (S3Exception $e) {
