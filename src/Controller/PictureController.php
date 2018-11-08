@@ -30,7 +30,8 @@ class PictureController extends AppController{
         // //$file_store_path=sprintf('%s%s', $store_dir,$file_name);
 
         // $result=$this->S3Client->putFile($file_local_path, $file_name);
-        $data = file_get_contents("php://input");
+        $json = file_get_contents("php://input");
+        $data = json_decode($json, true);
         $this->log($data['number']);
         // $fp = fopen("\storage\data.jpg", 'wb');
         // $fp = fopen($this->storage_path."data.jpg", 'wb');
