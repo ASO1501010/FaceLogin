@@ -33,7 +33,7 @@ class PictureController extends AppController{
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
         $this->log($data['number']);
-        $this->log($data['face']);
+        //$this->log($data['face']);
         // $fp = fopen("\storage\data.jpg", 'wb');
         // $fp = fopen($this->storage_path."data.jpg", 'wb');
         // fwrite($fp, $data);
