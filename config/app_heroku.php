@@ -22,10 +22,10 @@ return [
         ],
         's3' => [
             'className'  => 'CakeS3\Datasource\Connection',
-            'key'        => 'AKIAICC6ZQALG747TI2A',
-            'secret'     => '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',
-            'bucketName' => 'login-faces',
-            'region'     => 'us-east-1',
+            'key'        => env('AWS_S3_KEY', ''),
+            'secret'     => env('AWS_S3_SECRET', ''),
+            'bucketName' => env('AWS_S3_BUCKET', ''),
+            'region'     => env('AWS_S3_REGION', ''),
         ],
     ],
     'EmailTransport' => [
