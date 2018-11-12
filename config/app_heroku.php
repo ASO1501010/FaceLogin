@@ -24,8 +24,8 @@ return [
             'className'  => 'CakeS3\Datasource\Connection',
             'key'        => env('AWS_S3_KEY', ''),
             'secret'     => env('AWS_S3_SECRET', ''),
-            'bucketName' => env('AWS_S3_BUCKET', ''),
-            'region'     => env('AWS_S3_REGION', ''),
+            'bucketName' => 'us-east-1',
+            'region'     => 'login-faces',
         ],
     ],
     'EmailTransport' => [
