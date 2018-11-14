@@ -34,7 +34,7 @@ class PictureController extends AppController{
         // $this->log(gettype($json));
         $data = json_decode($json, true);
         $this->log($data['number']);
-        $this->log(gettype($data['face']));
+        $this->log($data['face']);
         //$this->log($data['face']);
         // $fp = fopen("\storage\data.jpg", 'wb');
         // $fp = fopen($this->storage_path."data.jpg", 'wb');
