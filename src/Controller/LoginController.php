@@ -27,10 +27,13 @@ class LoginController extends AppController{
         $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
-        $this->log($result);
+        //$this->log($result);
         $resultFile_name = "log_".str_replace('.', '_', $file_name)."json";
+        $this->log($resultFile_name);
         $bucket_name = "face-result0921";
-        $result_json = $this->S3Client->getFile($resultFile_name, $bucket_name);
+        $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
+        $result_json = json_decode($result, true);
+        $this->log(gettype($result_json));
         $this->log($result_json['FaceMatches']['Face']['ExternalImageId']);
     }
 }
