@@ -23,7 +23,7 @@ class LoginController extends AppController{
     public function compFace(){
         $this->autoRender = false;
         $face = file_get_contents("php://input");
-        $file_name = uniqid();
+        $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
         $this->log($result);
