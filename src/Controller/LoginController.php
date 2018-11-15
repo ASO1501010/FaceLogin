@@ -28,7 +28,7 @@ class LoginController extends AppController{
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
         //$this->log($result);
-        $resultFile_name = "log_".str_replace('.', '_', $file_name)."json";
+        $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
         $this->log($resultFile_name);
         $bucket_name = "face-result0921";
         $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
