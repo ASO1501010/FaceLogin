@@ -32,7 +32,7 @@ class PictureController extends AppController{
         // $result=$this->S3Client->putFile($file_local_path, $file_name);
         $json = file_get_contents("php://input");
         // $this->log(gettype($json));
-        $this->log($json);
+        $this->log(gettype($json));
         // $data = json_decode($json, true);
         // $this->log($data['number']);
         // $this->log($data['face']);
