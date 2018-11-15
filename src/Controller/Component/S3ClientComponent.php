@@ -96,14 +96,13 @@ class S3ClientComponent extends Component
      * @return mixed
      * @see https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/RetrieveObjSingleOpPHP.html
      */
-    public function getFile($s3_file_path, $store_file_path, $bucket_name=null)
+    public function getFile($s3_file_path, $bucket_name=null)
     {
         try {
             if(!$bucket_name) $bucket_name = $this->default_bucket;
             $result = $this->s3->getObject([
                 'Bucket' => $bucket_name,
                 'Key'    => $s3_file_path,
-                'SaveAs' => $store_file_path
             ]);
 
             return $result;
