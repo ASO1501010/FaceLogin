@@ -36,6 +36,8 @@ class LoginController extends AppController{
             $data = $result['Body'];
             $this->log($data);
             $content = $data->getContents();
+            $this->log($content);
+            $this->log(gettype($content));
             // $this->log($result['Body']);
             // if(is_null($result['Body'])){
             //     $this->log("nullです");
