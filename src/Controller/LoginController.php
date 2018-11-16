@@ -33,6 +33,7 @@ class LoginController extends AppController{
         $bucket_name = "face-results0921";
         $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
         //$data = $result['Body'];
+        $this->log($result['Body']);
         if(is_null($result['Body'])){
                 $this->log("nullです");
             }else{
