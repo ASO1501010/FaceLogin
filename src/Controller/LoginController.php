@@ -34,10 +34,10 @@ class LoginController extends AppController{
             sleep(2);
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
             $data = $result['Body'];
-            $this->log($data);
+            // $this->log($data);
             $content = $data->getContents();
-            $this->log($content['FaceMatches']['Face']['ExternalImageId']);
-            $this->log(is_array($content));
+            //$this->log($content['FaceMatches']['Face']['ExternalImageId']);
+            //$this->log(is_array($content));
             // $this->log($content);
             // $this->log(gettype($content));
             $json = json_decode($content);
@@ -51,7 +51,7 @@ class LoginController extends AppController{
             //$result_json = json_decode($result, true);
             // $this->log(gettype($result_json));
             // $this->log($data['FaceMatches']['Face']['ExternalImageId']);
-            $this->log($json);
+            $this->log(is_json($json));
             $this->log(gettype($json));
             $this->log($json['FaceMatches']['Face']['ExternalImageId']);
         }
