@@ -105,7 +105,11 @@ class S3ClientComponent extends Component
                 'Key'    => $s3_file_path,
             ]);
 
-            $this->log($result);
+            if(is_null($result)){
+                echo "nullです";
+            }else{
+                echo "nullではない";
+            }
 
             return $result;
         } catch (S3Exception $e) {
