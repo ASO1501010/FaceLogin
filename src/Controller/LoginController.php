@@ -37,6 +37,7 @@ class LoginController extends AppController{
             $this->log($data);
             $content = $data->getContents();
             $this->log($content['FaceMatches']['Face']['ExternalImageId']);
+            $this->log(is_array($content));
             // $this->log($content);
             // $this->log(gettype($content));
             $json = json_decode($content);
