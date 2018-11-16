@@ -27,21 +27,22 @@ class LoginController extends AppController{
         $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
-        $this->log($result['@metadata']['statusCode']);
-        $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
-        $this->log($resultFile_name);
-        $bucket_name = "face-results0921";
-        $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-        //$data = $result['Body'];
-        $this->log($result['Body']);
-        if(is_null($result['Body'])){
+        if($result['@metadata']['statusCode'] == 200){
+            $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
+            $this->log($resultFile_name);
+            $bucket_name = "face-results0921";
+            $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
+            //$data = $result['Body'];
+            $this->log($result['Body']);
+            if(is_null($result['Body'])){
                 $this->log("nullです");
             }else{
                 $this->log("nullではない");
                 $this->log($result['Body']);
             }
-        //$result_json = json_decode($result, true);
-        // $this->log(gettype($result_json));
-        $this->log($result['Body']['FaceMatches']['Face']['ExternalImageId']);
+            //$result_json = json_decode($result, true);
+            // $this->log(gettype($result_json));
+            $this->log($result['Body']['FaceMatches']['Face']['ExternalImageId']);
+        }
     }
 }
