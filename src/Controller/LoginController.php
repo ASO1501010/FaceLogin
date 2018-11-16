@@ -43,6 +43,7 @@ class LoginController extends AppController{
             // $this->log(gettype($content));
             //$json = json_decode($content);
             $this->log($content);
+            $data = (string)$content;
             // $this->log($result['Body']);
             // if(is_null($result['Body'])){
             //     $this->log("nullです");
@@ -52,7 +53,7 @@ class LoginController extends AppController{
             // }
             //$result_json = json_decode($result, true);
             // $this->log(gettype($result_json));
-            // $this->log($data['FaceMatches']['Face']['ExternalImageId']);
+            $this->log($data['FaceMatches']['Face']['ExternalImageId']);
             //$this->log(is_json($json));
             //$this->log(gettype($json));
             //$this->log($json['FaceMatches']['Face']['ExternalImageId']);
