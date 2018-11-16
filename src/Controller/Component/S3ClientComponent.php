@@ -106,9 +106,9 @@ class S3ClientComponent extends Component
             ]);
 
             if(is_null($result)){
-                echo "nullです";
+                $this->log("nullです");
             }else{
-                echo "nullではない";
+                $this->log("nullではない");
             }
 
             return $result;
