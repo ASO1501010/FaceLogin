@@ -105,7 +105,7 @@ class S3ClientComponent extends Component
                 'Key'    => $s3_file_path,
             ]);
 
-            return $result;
+            return $result['Body'];
         } catch (S3Exception $e) {
             echo $e->getMessage();
         }
