@@ -35,6 +35,7 @@ class LoginController extends AppController{
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
             $data = $result['Body'];
             $this->log($data);
+            $content = $data->getContents();
             // $this->log($result['Body']);
             // if(is_null($result['Body'])){
             //     $this->log("nullです");
@@ -44,7 +45,8 @@ class LoginController extends AppController{
             // }
             //$result_json = json_decode($result, true);
             // $this->log(gettype($result_json));
-            $this->log($data['FaceMatches']['Face']['ExternalImageId']);
+            // $this->log($data['FaceMatches']['Face']['ExternalImageId']);
+            $this->log($content['FaceMatches']['Face']['ExternalImageId']);
         }
     }
 }
