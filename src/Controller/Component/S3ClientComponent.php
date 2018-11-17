@@ -103,6 +103,7 @@ class S3ClientComponent extends Component
             $result = $this->s3->getObject([
                 'Bucket' => $bucket_name,
                 'Key'    => $s3_file_path,
+                'ResponseContentType' => 'application/json',
             ]);
 
             //$this->log($result['Body']);

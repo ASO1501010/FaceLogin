@@ -33,7 +33,7 @@ class LoginController extends AppController{
             $bucket_name = "face-results0921";
             sleep(2);
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-            $content = $result->getBody()->getContents();
+            $content = $result['Body']->getContents();
             // $data = $result['Body'];
             // $this->log($data);
             // $content = $data->getContents();
@@ -43,7 +43,7 @@ class LoginController extends AppController{
             // $this->log(gettype($content));
             //$json = json_decode($content);
             $this->log($content);
-            $data = (string)$content;
+            //$data = (string)$content;
             // $this->log($result['Body']);
             // if(is_null($result['Body'])){
             //     $this->log("nullです");
@@ -53,7 +53,7 @@ class LoginController extends AppController{
             // }
             //$result_json = json_decode($result, true);
             // $this->log(gettype($result_json));
-            $this->log($data['FaceMatches']['Face']['ExternalImageId']);
+            //$this->log($data['FaceMatches']['Face']['ExternalImageId']);
             //$this->log(is_json($json));
             //$this->log(gettype($json));
             //$this->log($json['FaceMatches']['Face']['ExternalImageId']);
