@@ -34,7 +34,8 @@ class LoginController extends AppController{
             sleep(2);
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
             //$content = $result['Body']->getContents();
-            $content = (string)$result->get('Body');
+            $json = $result->get('Body');
+            $content = (string)$json;
             // $data = $result['Body'];
             // $this->log($data);
             // $content = $data->getContents();
