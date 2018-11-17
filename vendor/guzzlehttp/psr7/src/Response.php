@@ -119,6 +119,38 @@ class Response implements ResponseInterface
         return $this->reasonPhrase;
     }
 
+    public function json(array $config = [])
+
+    {
+
+        try {
+
+            return Utils::jsonDecode(
+
+                (string) $this->getBody(),
+
+                isset($config['object']) ? !$config['object'] : true,
+
+                512,
+
+                isset($config['big_int_strings']) ? JSON_BIGINT_AS_STRING : 0
+
+            );
+
+        } catch (\InvalidArgumentException $e) {
+
+            throw new ParseException(
+
+                $e->getMessage(),
+
+                $this
+
+            );
+
+        }
+
+    }
+
     public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
