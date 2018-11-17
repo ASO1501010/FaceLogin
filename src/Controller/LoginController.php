@@ -36,8 +36,8 @@ class LoginController extends AppController{
             //$content = $result['Body']->getContents();
             $json = $result->get('Body');
             $data = (string)$json;
-            $stdclass = json_decode($data);
-            $content = (array)$stdclass;
+            $content = json_decode($data, true);
+            //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
             // $content = $data->getContents();
@@ -67,7 +67,7 @@ class LoginController extends AppController{
             //$this->log(gettype($json));
             //$this->log($json['FaceMatches']['Face']['ExternalImageId']);
             $this->log($content['FaceMatches']['Face']['ExternalImageId']);
-            $this->log($content[1]);
+            //$this->log($content[1]);
         }
     }
 }
