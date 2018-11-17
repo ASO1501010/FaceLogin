@@ -36,7 +36,8 @@ class LoginController extends AppController{
             //$content = $result['Body']->getContents();
             $json = $result->get('Body');
             $data = (string)$json;
-            $content = json_decode($data);
+            $stdclass = json_decode($data);
+            $content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
             // $content = $data->getContents();
