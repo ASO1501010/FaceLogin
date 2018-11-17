@@ -37,6 +37,12 @@ class LoginController extends AppController{
             $json = $result->get('Body');
             $data = (string)$json;
             $content = json_decode($data, true);
+            $number = str_replace('.jpg', '', $content['FaceMatches'][0]['Face']['ExternalImageId']);
+            $similarity = $content['FaceMatches'][0]['Similarity'];
+            $this->log($number);
+            $this->log(gettype($number));
+            $this->log($similarity);
+            $this->log(gettype($similarity));
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
@@ -46,12 +52,12 @@ class LoginController extends AppController{
             // $this->log($content);
             // $this->log(gettype($content));
             //$json = json_decode($content);
-            $this->log($content);
-            if(is_array($content) && is_string($content)){
-                $this->log("jsonです");
-            }else{
-                $this->log("jsonではない");
-            }
+            // $this->log($content);
+            // if(is_array($content) && is_string($content)){
+            //     $this->log("jsonです");
+            // }else{
+            //     $this->log("jsonではない");
+            // }
             //$data = (string)$content;
             // $this->log($result['Body']);
             // if(is_null($result['Body'])){
@@ -66,7 +72,7 @@ class LoginController extends AppController{
             //$this->log(is_json($json));
             //$this->log(gettype($json));
             //$this->log($json['FaceMatches']['Face']['ExternalImageId']);
-            $this->log($content['FaceMatches'][0]['Face']['ExternalImageId']);
+            //$this->log($content['FaceMatches'][0]['Face']['ExternalImageId']);
             //$this->log($content[1]);
         }
     }
