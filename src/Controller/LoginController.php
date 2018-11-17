@@ -33,7 +33,8 @@ class LoginController extends AppController{
             $bucket_name = "face-results0921";
             sleep(2);
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-            $content = $result['Body']->getContents();
+            //$content = $result['Body']->getContents();
+            $content = $result['Body'];
             // $data = $result['Body'];
             // $this->log($data);
             // $content = $data->getContents();
