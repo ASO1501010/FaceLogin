@@ -27,12 +27,12 @@ class LoginController extends AppController{
         $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
+        sleep(2);
         if($result['@metadata']['statusCode'] == 200){
             $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
             $this->log($resultFile_name);
             $bucket_name = "face-results0921";
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-            sleep(2);
             //$content = $result['Body']->getContents();
             $json = $result->get('Body');
             $data = (string)$json;
