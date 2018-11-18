@@ -47,14 +47,14 @@ class LoginController extends AppController{
 
             $infoController = new InfoController;
             $userInfo = $infoController->SearchUserInfo($number);
-            $number = 0;
+            $return_number = 0;
             foreach($userInfo as $user){
-                $number = $user->number;
+                $return_number = $user->number;
                 $this->log($user->number);
             }
 
             header("Content-type: application/json; charset=UTF-8");
-            echo json_encode($number);
+            echo json_encode($return_number);
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
