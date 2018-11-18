@@ -48,7 +48,7 @@ class PictureController extends AppController{
         $result=$this->S3Client->putFile($face, $file_name);
 
         $infoController = new InfoController;
-        $infoController->addUser($data['number'], $data['name'], $data['level']);
+        $infoController->addUser(intval($data['number']), $data['name'], intval($data['level']));
     }
 
     public function face(){
