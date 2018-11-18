@@ -9,6 +9,7 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
+use App\Controller\InfoController;
 
 class LoginController extends AppController{
     public function initialize(){
@@ -43,6 +44,13 @@ class LoginController extends AppController{
             $this->log(gettype($number));
             $this->log($similarity);
             $this->log(gettype($similarity));
+
+            $infoController = new InfoController;
+            $userInfo = $infoController->SearchUserInfo($number);
+            $this->log($userInfo);
+
+            header("Content-type: application/json; charset=UTF-8")
+            echo json_encode();
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);

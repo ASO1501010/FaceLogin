@@ -17,21 +17,21 @@ class InfoController extends AppController{
         $this->loadModel('Schedule');
     }
 
-    public function searchUserInfo(){
-        if($this->request->is('post')){
-            $res['user_info'] = $this->Schools->find('all', [
-				'conditions'=>['number' => $this->request->data['number']]
-			]);
-			$res['qualification'] = $this->Qualifications->find('all',[
-				'condition'=>['school_id'=>$user_info['school_id']]
-			]);
-			$res['schedule'] = $this->Schedules->find('all',[
-				'condition'=>['school_id'=>$user_info['school_id']]
-			]);
-        }
+    public function searchUserInfo($number){
+        $res['user_info'] = $this->Schools->find('all', [
+			'conditions'=>['number' => $number]
+		]);
+		// $res['qualification'] = $this->Qualifications->find('all',[
+		// 	'condition'=>['school_id'=>$user_info['school_id']]
+		// ]);
+		// $res['schedule'] = $this->Schedules->find('all',[
+		// 	'condition'=>['school_id'=>$user_info['school_id']]
+		// ]);
+
+        return $res;
         //$data->order(['contributiondate'=>'DESC']);
-        header('Content-Type: application/json; charset=utf-8');
-		echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        // header('Content-Type: application/json; charset=utf-8');
+		// echo json_encode($res, JSON_UNESCAPED_UNICODE);
     }
 
     public function addUser($number, $username, $level){
