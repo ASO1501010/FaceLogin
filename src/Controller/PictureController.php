@@ -9,7 +9,7 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
-use App\Controller\InfoController
+use App\Controller\InfoController;
 
 class PictureController extends AppController{
     public function initialize(){
