@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 
+App::import("Controller", "Info");
+
 use Cake\ORM\TableRegistry;
 use Cake\I18n\FrozenDate;
 use \Exception;
@@ -45,6 +47,9 @@ class PictureController extends AppController{
         // $file_name = "1501010.jpg";
         // $file_local_path=sprintf('%s%s', $this->storage_path, $file_name);
         $result=$this->S3Client->putFile($face, $file_name);
+
+        $infoController = new InfoController;
+        $infoController->addUser($data['number'], "佐藤公太", 1);
     }
 
     public function face(){

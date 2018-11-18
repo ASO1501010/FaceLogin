@@ -30,15 +30,13 @@ class TakebookarticlesController extends AppController{
 		echo json_encode($res, JSON_UNESCAPED_UNICODE);
     }
 
-    public function addUser(){
-        if($this->request->is('post')){
-            $data = array(
-				'number'=>h($this->request->data['number']),
-                'username'=>h($this->request->data['username']),
-                'level'=>h($this->request->data['level']),
-            );
-            $this->Schools->save($this->Schools->newEntity($data));
-        }
+    public function addUser($number, $username, $level){
+        $data = array(
+			'number'=>h($number),
+            'first_name'=>h($username),
+            'level'=>h($level),
+        );
+        $this->Schools->save($this->Schools->newEntity($data));
     }
 
     public function editUserInfo(){
