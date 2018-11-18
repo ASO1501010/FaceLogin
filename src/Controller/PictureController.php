@@ -1,7 +1,7 @@
 <?php
-namespace App\Controller;
-
 App::import("Controller", "Info");
+
+namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\I18n\FrozenDate;
