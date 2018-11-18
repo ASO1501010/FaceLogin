@@ -41,11 +41,14 @@ class PictureController extends AppController{
         // $fp = fopen($this->storage_path."data.jpg", 'wb');
         // fwrite($fp, $data);
         $face = base64_decode($data['face']);
-        $this->log($face);
+        //$this->log($face);
         $file_name = $data['number'].".jpg";
         // $file_name = "1501010.jpg";
         // $file_local_path=sprintf('%s%s', $this->storage_path, $file_name);
         $result=$this->S3Client->putFile($face, $file_name);
+
+        $this->log($data['name']);
+        $this->log(gettype($data['name']));
 
         $infoController = new InfoController;
         $infoController->addUser(intval($data['number']), $data['name'], intval($data['level']));
