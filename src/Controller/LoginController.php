@@ -48,7 +48,7 @@ class LoginController extends AppController{
             $infoController = new InfoController;
             $userInfo = $infoController->SearchUserInfo($number);
             $return_number = 0;
-            foreach($userInfo as $user){
+            foreach($userInfo['base_info'] as $user){
                 $return_number = $user->number;
                 $this->log($user->number);
             }

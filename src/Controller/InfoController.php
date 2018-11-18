@@ -18,7 +18,7 @@ class InfoController extends AppController{
     }
 
     public function searchUserInfo($number){
-        $res['user_info'] = $this->School->find('all', [
+        $res['base_info'] = $this->School->find('all', [
 			'conditions'=>['number' => $number]
 		]);
 		// $res['qualification'] = $this->Qualifications->find('all',[
