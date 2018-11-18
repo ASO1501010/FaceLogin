@@ -9,8 +9,12 @@ use Cake\Log\Log;
 class InfoController extends AppController{
     public function initialize(){
         FrozenDate::setToStringFormat('yyyy/MM/dd');
-	    $this->viewBuilder()->autoLayout(false);
+	    $this->viewBuilder()->enableAutoLayout(false);
         date_default_timezone_set('Asia/Tokyo');
+
+        $this->loadModel('Schools');
+        $this->loadModel('Qualifications');
+        $this->loadModel('Schedules');
     }
 
     public function searchUserInfo(){
