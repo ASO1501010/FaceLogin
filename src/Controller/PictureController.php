@@ -1,6 +1,4 @@
 <?php
-App::import("Controller", "Info");
-
 namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
@@ -11,6 +9,8 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
+
+App::import("Controller", "Info");
 
 class PictureController extends AppController{
     public function initialize(){
