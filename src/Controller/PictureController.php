@@ -49,7 +49,7 @@ class PictureController extends AppController{
         $result=$this->S3Client->putFile($face, $file_name);
 
         $infoController = new InfoController;
-        $infoController->addUser($data['number'], "佐藤公太", 1);
+        $infoController->addUser($data['number'], $data['name'], $data['level']);
     }
 
     public function face(){
