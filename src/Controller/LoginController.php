@@ -50,7 +50,7 @@ class LoginController extends AppController{
             $this->log($userInfo);
 
             header("Content-type: application/json; charset=UTF-8")
-            echo json_encode();
+            echo json_encode($userInfo['number']);
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
