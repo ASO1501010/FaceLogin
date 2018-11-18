@@ -12,9 +12,9 @@ class InfoController extends AppController{
 	    $this->viewBuilder()->enableAutoLayout(false);
         date_default_timezone_set('Asia/Tokyo');
 
-        $this->loadModel('Schools');
-        $this->loadModel('Qualifications');
-        $this->loadModel('Schedules');
+        $this->loadModel('School');
+        $this->loadModel('Qualification');
+        $this->loadModel('Schedule');
     }
 
     public function searchUserInfo(){
@@ -40,7 +40,7 @@ class InfoController extends AppController{
             'first_name'=>h($username),
             'level'=>h($level),
         );
-        $this->Schools->save($this->Schools->newEntity($data));
+        $this->School->save($this->School->newEntity($data));
     }
 
     public function editUserInfo(){

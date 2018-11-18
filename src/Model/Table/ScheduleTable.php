@@ -17,7 +17,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Cost[] patchEntities($entities, array $data, array $options = [])
  * @method \App\Model\Entity\Cost findOrCreate($search, callable $callback = null, $options = [])
  */
-class SchedulesTable extends Table
+class ScheduleTable extends Table
 {
 /*
     /**
