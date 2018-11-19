@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use \Exception;
 use Cake\Log\Log;
 
@@ -25,8 +26,8 @@ class AddInfoController extends AppController{
         $this->autoRender = false;
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
-        $pass_date_tmp = new DateTime($date['pass_date']);
-        $pass_date = $pass_date_tmp->format('Y-m-d');
+        $pass_date = new Date($date['pass_date']);
+        //$pass_date = $pass_date_tmp->format('Y-m-d');
 
         $infoController = new InfoController;
         $infoController->addQualification(intval($data['school_id']), $data['qualification_name'], $pass_date);
@@ -36,10 +37,10 @@ class AddInfoController extends AppController{
         $this->autoRender = false;
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
-        $date_tmp = new DateTime($date['start_date']);
-        $start_date = $date_tmp->format('Y-m-d');
-        $date_tmp = new DateTime($date['end_date']);
-        $end_date = $date_tmp->format('Y-m-d');
+        $start_date = new Date($date['start_date']);
+        //$start_date = $date_tmp->format('Y-m-d');
+        $end_date = new Date($date['end_date']);
+        //$end_date = $date_tmp->format('Y-m-d');
 
         $infoController = new InfoController;
         $infoController->addSchedule(intval($data['school_id']), $data['company'], $start_date, $end_date);
