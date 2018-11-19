@@ -11,7 +11,7 @@ use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
 use App\Controller\InfoController;
 
-class addInfoController extends AppController{
+class AddInfoController extends AppController{
     public function initialize(){
         FrozenDate::setToStringFormat('yyyy/MM/dd');
 	    $this->viewBuilder()->enableAutoLayout(false);
