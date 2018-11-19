@@ -70,10 +70,11 @@ class LoginController extends AppController{
 
             $json_qualification_out = array();
             foreach($userInfo['qualification_info'] as $qualification){
-                $json_qualification_out = ['pass_date' => $qualification->pass_date,
-                                           'qualification_name' => $qualification->qualification_name
-                                           ];
+                array_push($json_qualification_out, 'pass_date' => $qualification->pass_date,
+                                                    'qualification_name' => $qualification->qualification_name
+                );
             }
+            $this->log($json_qualification_out);
 
             $json_schedule_out = array();
             foreach($userInfo['schedule_info'] as $schedule){
