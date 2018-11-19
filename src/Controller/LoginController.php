@@ -47,14 +47,25 @@ class LoginController extends AppController{
 
             $infoController = new InfoController;
             $userInfo = $infoController->SearchUserInfo($number);
-            $return_number = 0;
+            $json_out = array();
+            //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
-                $return_number = $user->number;
+                $json_out['number'] = $user->number;
+                $json_out['name'] = $user->first_name;
+                $json_out['kana'] = $user->first_name_kana;
+                $json_out['address'] = $user->address;
+                $json_out['home_address'] = $user->home_address;
+                $json_out['birthday'] = $user->birthday;
+                $json_out['sex'] = $user->sex;
+                $json_out['phone'] = $user->phone;
+                $json_out['home_phone'] = $user->tel;
+                $json_out['mail'] = $user->mail;
+                //$return_number = $user->number;
                 $this->log($user->number);
             }
 
             header("Content-type: application/json; charset=UTF-8");
-            echo json_encode($return_number);
+            echo json_encode($json_out);
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
