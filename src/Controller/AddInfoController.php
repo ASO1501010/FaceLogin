@@ -26,7 +26,7 @@ class AddInfoController extends AppController{
         $this->autoRender = false;
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
-        $pass_date = new Date($date['pass_date']);
+        $pass_date = new Date($data['pass_date']);
         //$pass_date = $pass_date_tmp->format('Y-m-d');
 
         $infoController = new InfoController;
@@ -37,9 +37,9 @@ class AddInfoController extends AppController{
         $this->autoRender = false;
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
-        $start_date = new Date($date['start_date']);
+        $start_date = new Date($data['start_date']);
         //$start_date = $date_tmp->format('Y-m-d');
-        $end_date = new Date($date['end_date']);
+        $end_date = new Date($data['end_date']);
         //$end_date = $date_tmp->format('Y-m-d');
 
         $infoController = new InfoController;
