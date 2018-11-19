@@ -64,7 +64,7 @@ class InfoController extends AppController{
                 'qualification_name'=>h($name),
                 'pass_date'=>$pass_date,
             );
-            $this->Qualification->save($this->Qualifications->newEntity($data));
+            $this->Qualification->save($this->Qualification->newEntity($data));
         }
     }
 
@@ -92,7 +92,7 @@ class InfoController extends AppController{
 				// 'pass_flag'=>h($this->request->data['pass_flag']),
 				// 'attendance_flag'=>h($this->request->data['attendance_flag'])
             );
-            $this->Schedule->save($this->Schedules->newEntity($data));
+            $this->Schedule->save($this->Schedule->newEntity($data));
         }
     }
 
