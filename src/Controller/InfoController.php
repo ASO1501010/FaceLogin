@@ -57,13 +57,14 @@ class InfoController extends AppController{
         }
     }
 
-    public function addQualification(){
+    public function addQualification($school_id, $name, $pass_date){
         if($this->request->is('post')){
             $data = array(
-                'qualification_name'=>h($this->request->data['qualification_name']),
-                'pass_date'=>date("Y/m/d"),
+                'school_id'=>h($school_id),
+                'qualification_name'=>h($name),
+                'pass_date'=>$pass_date,
             );
-            $this->Qualifications->save($this->Qualifications->newEntity($data));
+            $this->Qualification->save($this->Qualifications->newEntity($data));
         }
     }
 
@@ -79,18 +80,19 @@ class InfoController extends AppController{
         }
     }
 
-	public function addSchedule(){
+	public function addSchedule($school_id, $company, $start, $end){
         if($this->request->is('post')){
             $data = array(
-                'company'=>h($this->request->data['company']),
-				'category'=>h($this->request->data['category']),
-				'content'=>h($this->request->data['content']),
-                'start_date'=>h($this->request->data['start_date']),
-				'end_date'=>h($this->request->data['end_date']),
-				'pass_flag'=>h($this->request->data['pass_flag']),
-				'attendance_flag'=>h($this->request->data['attendance_flag'])
+                'school_id'=>h($school_id),
+                'company'=>h($company),
+				// 'category'=>h($this->request->data['category']),
+				// 'content'=>h($this->request->data['content']),
+                'start_date'=>h($start),
+				'end_date'=>h($end),
+				// 'pass_flag'=>h($this->request->data['pass_flag']),
+				// 'attendance_flag'=>h($this->request->data['attendance_flag'])
             );
-            $this->Schedules->save($this->Schedules->newEntity($data));
+            $this->Schedule->save($this->Schedules->newEntity($data));
         }
     }
 

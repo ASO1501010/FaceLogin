@@ -51,6 +51,7 @@ class LoginController extends AppController{
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
                 $json_user_out = ['level' => $user->level,
+                             'school_id' => $user->school_id,
                              'name' => $user->first_name,
                              'kana' => $user->first_name_kana,
                              'number' => $user->number,
