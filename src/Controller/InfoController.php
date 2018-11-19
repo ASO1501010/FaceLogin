@@ -21,12 +21,14 @@ class InfoController extends AppController{
         $res['base_info'] = $this->School->find('all', [
 			'conditions'=>['number' => $number]
 		]);
-		// $res['qualification'] = $this->Qualifications->find('all',[
-		// 	'condition'=>['school_id'=>$user_info['school_id']]
-		// ]);
-		// $res['schedule'] = $this->Schedules->find('all',[
-		// 	'condition'=>['school_id'=>$user_info['school_id']]
-		// ]);
+        foreach($res['base_info'] as $user){
+		    $res['qualification_info'] = $this->Qualifications->find('all',[
+			    'condition'=>['school_id'=>$user->school_id]
+		    ]);
+		    $res['schedule_info'] = $this->Schedules->find('all',[
+			    'condition'=>['school_id'=>$user->school_id]
+		    ]);
+        }
 
         return $res;
         //$data->order(['contributiondate'=>'DESC']);

@@ -50,7 +50,7 @@ class LoginController extends AppController{
             $json_out = array();
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
-                $json_out = ['level' => $user->level,
+                $json_user_out = ['level' => $user->level,
                              'name' => $user->first_name,
                              'kana' => $user->first_name_kana,
                              'number' => $user->number,
@@ -67,8 +67,24 @@ class LoginController extends AppController{
                 $this->log($user->number);
             }
 
+            foreach($userInfo['qualification_info'] as $qualification){
+                $json_qualification_out = ['pass_date' => $qualification->pass_date,
+                                           'qualification_name' => $qualification->qualification_name
+                                           ];
+            }
+
+            foreach($userInfo['schedule_info'] as $schedule){
+                $json_schedule_out = ['company' => $schedule->company,
+                                      'start_date' => $schedule->start_date,
+                                      'end_date' => $schedule->end_date
+                                      ];
+            }
+
+
             header("Content-type: application/json; charset=UTF-8");
-            echo json_encode($json_out, JSON_UNESCAPED_UNICODE);
+            echo json_encode($json_user_out, JSON_UNESCAPED_UNICODE);
+            echo json_encode($json_qualification_out, JSON_UNESCAPED_UNICODE);
+            echo json_encode($json_schedule_out, JSON_UNESCAPED_UNICODE);
             //$content = (array)$stdclass;
             // $data = $result['Body'];
             // $this->log($data);
