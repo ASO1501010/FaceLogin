@@ -28,7 +28,7 @@ class LoginController extends AppController{
         $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
-        sleep(2);
+        sleep(4);
         if($result['@metadata']['statusCode'] == 200){
             $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
             $this->log($resultFile_name);
