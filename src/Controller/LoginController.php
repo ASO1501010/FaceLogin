@@ -50,16 +50,16 @@ class LoginController extends AppController{
             $json_out = array();
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
-                $json_out['number'] = $user->number;
                 $json_out['name'] = $user->first_name;
                 $json_out['kana'] = $user->first_name_kana;
+                $json_out['number'] = $user->number;
                 $json_out['address'] = $user->address;
                 $json_out['home_address'] = $user->home_address;
                 $json_out['birthday'] = $user->birthday;
                 $json_out['sex'] = $user->sex;
-                $json_out['phone'] = $user->phone;
-                $json_out['home_phone'] = $user->tel;
-                $json_out['mail'] = $user->mail;
+                $json_out['phone_number'] = $user->phone;
+                $json_out['home_number'] = $user->tel;
+                $json_out['mail_address'] = $user->mail;
                 //$return_number = $user->number;
                 $this->log($user->number);
             }
