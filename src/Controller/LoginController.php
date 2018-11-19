@@ -47,7 +47,7 @@ class LoginController extends AppController{
 
             $infoController = new InfoController;
             $userInfo = $infoController->SearchUserInfo($number);
-            $json_out = array();
+            $json_user_out = array();
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
                 $json_user_out = ['level' => $user->level,
@@ -68,12 +68,14 @@ class LoginController extends AppController{
                 $this->log($user->number);
             }
 
+            $json_qualification_out = array();
             foreach($userInfo['qualification_info'] as $qualification){
                 $json_qualification_out = ['pass_date' => $qualification->pass_date,
                                            'qualification_name' => $qualification->qualification_name
                                            ];
             }
 
+            $json_schedule_out = array();
             foreach($userInfo['schedule_info'] as $schedule){
                 $json_schedule_out = ['company' => $schedule->company,
                                       'start_date' => $schedule->start_date,
