@@ -18,6 +18,9 @@ class LoginController extends AppController{
 	    $this->viewBuilder()->enableAutoLayout(false);
         date_default_timezone_set('Asia/Tokyo');
 
+        $this->loadModel('Qualification');
+        $this->loadModel('Schedule');
+
         $this->S3Client = new S3ClientComponent(new ComponentRegistry());
         $this->storage_path=STORAGE_PATH;
     }
@@ -70,9 +73,12 @@ class LoginController extends AppController{
             }
 
             $json_qualification_out = array();
-            $this->log(gettype($userInfo['qualification_info']));
-            $this->log(count($userInfo['qualification_info']));
-            foreach($userInfo['qualification_info'] as $qualification){
+            // $this->log(gettype($userInfo['qualification_info']));
+            // $this->log(count($userInfo['qualification_info']));
+            $sikaku = $this->Qualification->find('all',[
+			    'condition'=>['school_id'=>$json_user_out['school_id']]
+		    ]);
+            foreach($sikaku as $qualification){
                 $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
                                                  'qualification_name' => $qualification->qualification_name
