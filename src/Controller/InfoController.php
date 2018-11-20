@@ -40,7 +40,7 @@ class InfoController extends AppController{
 
     public function searchQualificationInfo($number){
 		$qualification_info = $this->Qualification->find('all',[
-			    'condition'=>['school_id'=>$user->school_id]
+			    'condition'=>['school_id'=>$number]
 		]);
         return $qualification_info;
         //$data->order(['contributiondate'=>'DESC']);
