@@ -89,7 +89,7 @@ class LoginController extends AppController{
 			//     'condition'=>['school_id'=>$json_user_out['school_id']]
 		    // ]);
             //$sikaku = $this->Qualification->find('all');
-            $this->log($sikaku->count());
+            //$this->log($sikaku->count());
             var_dump($sikaku);
             $cnt = 0;
             foreach($sikaku as $qualification){
