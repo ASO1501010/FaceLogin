@@ -77,11 +77,13 @@ class LoginController extends AppController{
             $this->log($json_qualification_out);
 
             $json_schedule_out = array();
-            foreach($userInfo['schedule_info'] as $schedule){
-                $json_schedule_out = ['company' => $schedule->company,
-                                      'start_date' => $schedule->start_date->format('Y-m-d'),
-                                      'end_date' => $schedule->end_date->format('Y-m-d')
-                                      ];
+            if(!(is_null($userInfo['schedule_info']))){
+                foreach($userInfo['schedule_info'] as $schedule){
+                    $json_schedule_out = ['company' => $schedule->company,
+                                          'start_date' => $schedule->start_date->format('Y-m-d'),
+                                          'end_date' => $schedule->end_date->format('Y-m-d')
+                                         ];
+                }
             }
 
 
