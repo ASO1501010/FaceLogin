@@ -56,7 +56,7 @@ class LoginController extends AppController{
                              'number' => $user->number,
                              'address' => $user->address,
                              'home_address' => $user->home_address,
-                             'birthday' => $user->birthday,
+                             'birthday' => $user->birthday->format('Y-m-d'),
                              'sex' => $user->sex,
                              'phone_number' => $user->phone,
                              'home_number' => $user->tel,
@@ -70,15 +70,17 @@ class LoginController extends AppController{
             $json_qualification_out = array();
             $this->log(count($userInfo['qualification_info']));
             foreach($userInfo['qualification_info'] as $qualification){
-                $json_qualification_out += array('pass_date' => $qualification->pass_date, 'qualification_name' => $qualification->qualification_name);
+                $json_qualification_out += array('pass_date' => $qualification->pass_date->format('Y-m-d'), 
+                                                 'qualification_name' => $qualification->qualification_name->format('Y-m-d')
+                                                 );
             }
             $this->log($json_qualification_out);
 
             $json_schedule_out = array();
             foreach($userInfo['schedule_info'] as $schedule){
                 $json_schedule_out = ['company' => $schedule->company,
-                                      'start_date' => $schedule->start_date,
-                                      'end_date' => $schedule->end_date
+                                      'start_date' => $schedule->start_date->format('Y-m-d'),
+                                      'end_date' => $schedule->end_date->format('Y-m-d')
                                       ];
             }
 
