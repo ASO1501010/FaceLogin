@@ -4,6 +4,7 @@ namespace App\Controller;
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Query;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\Date;
 use \Exception;
