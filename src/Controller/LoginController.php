@@ -82,7 +82,7 @@ class LoginController extends AppController{
             // $this->log(count($userInfo['qualification_info']));
             // $this->Qualification = TableRegistry::get('Qualification');
             // $this->set('entity', $this->Qualification->newEntity());
-            $sikaku = $this->Qualification->find('all',[
+            $sikaku[] = $this->Qualification->find('all',[
 			    'condition'=>['school_id'=>$json_user_out['school_id']]
 		    ]);
             // $sikaku_cnt = $this->Qualification->find('count',[
