@@ -38,6 +38,16 @@ class InfoController extends AppController{
 		// echo json_encode($res, JSON_UNESCAPED_UNICODE);
     }
 
+    public function searchQualificationInfo($number){
+		$qualification_info = $this->Qualification->find('all',[
+			    'condition'=>['school_id'=>$user->school_id]
+		]);
+        return $qualification_info;
+        //$data->order(['contributiondate'=>'DESC']);
+        // header('Content-Type: application/json; charset=utf-8');
+		// echo json_encode($res, JSON_UNESCAPED_UNICODE);
+    }
+
     public function addUser($number, $username, $level){
         $data = array(
 			'number'=>h($number),

@@ -51,7 +51,7 @@ class LoginController extends AppController{
             $this->log($similarity);
             $this->log(gettype($similarity));
             $infoController = new InfoController;
-            $userInfo = $infoController->SearchUserInfo($number);
+            $userInfo = $infoController->searchUserInfo($number);
             $json_user_out = array();
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
@@ -75,7 +75,8 @@ class LoginController extends AppController{
             }
 
             $json_qualification_out = array();
-            $this->log($userInfo['qualification_info']);
+            $sikaku = $infoController->searchQualificationInfo($json_user_out['school_id']);
+            $this->log($sikaku);
             // $this->log(gettype($userInfo['qualification_info']));
             // $this->log(count($userInfo['qualification_info']));
             // $sikaku = $this->Qualification->find('all',[
@@ -83,7 +84,7 @@ class LoginController extends AppController{
 		    // ]);
             // $sikaku = $this->Qualification->find('all');
             // $this->log(count($sikaku));
-            foreach($userInfo['qualification_info'] as $qualification){
+            foreach($sikaku as $qualification){
                 $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
                                                  'qualification_name' => $qualification->qualification_name
