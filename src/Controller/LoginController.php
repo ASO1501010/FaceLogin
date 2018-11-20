@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Query;
+use Cake\ORM\Entity;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\Date;
 use \Exception;
@@ -74,6 +75,7 @@ class LoginController extends AppController{
             }
 
             $json_qualification_out = array();
+            $this->log($userInfo['qualification_info']);
             // $this->log(gettype($userInfo['qualification_info']));
             // $this->log(count($userInfo['qualification_info']));
             // $sikaku = $this->Qualification->find('all',[
