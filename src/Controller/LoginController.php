@@ -71,7 +71,7 @@ class LoginController extends AppController{
             $this->log(count($userInfo['qualification_info']));
             foreach($userInfo['qualification_info'] as $qualification){
                 $json_qualification_out += array('pass_date' => $qualification->pass_date->format('Y-m-d'), 
-                                                 'qualification_name' => $qualification->qualification_name->format('Y-m-d')
+                                                 'qualification_name' => $qualification->qualification_name
                                                  );
             }
             $this->log($json_qualification_out);
