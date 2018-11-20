@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
+use Cake\ORM\Query;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\Date;
 use \Exception;
@@ -78,9 +79,9 @@ class LoginController extends AppController{
             // $sikaku = $this->Qualification->find('all',[
 			//     'condition'=>['school_id'=>$json_user_out['school_id']]
 		    // ]);
-            $sikaku = $this->Qualification->find('all');
-            $this->log(count($sikaku));
-            foreach($sikaku as $qualification){
+            // $sikaku = $this->Qualification->find('all');
+            // $this->log(count($sikaku));
+            foreach($userInfo['qualification_info'] as $qualification){
                 $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
                                                  'qualification_name' => $qualification->qualification_name

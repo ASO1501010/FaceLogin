@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
+use Cake\ORM\Query;
 use Cake\I18n\FrozenDate;
 use \Exception;
 use Cake\Log\Log;
