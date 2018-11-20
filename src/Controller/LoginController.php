@@ -75,15 +75,17 @@ class LoginController extends AppController{
             }
 
             $json_qualification_out = array();
-            $sikaku = $infoController->searchQualificationInfo($json_user_out['school_id']);
-            $this->log($sikaku);
+            // $sikaku = $infoController->searchQualificationInfo($json_user_out['school_id']);
+            // $this->log($sikaku);
             // $this->log(gettype($userInfo['qualification_info']));
             // $this->log(count($userInfo['qualification_info']));
-            // $sikaku = $this->Qualification->find('all',[
-			//     'condition'=>['school_id'=>$json_user_out['school_id']]
-		    // ]);
+            $this->Qualification = TableRegistry::get('Qualification');
+            $this->set('entity', $this->Qualification->newEntity());
+            $sikaku = $this->Qualification->find('all',[
+			    'condition'=>['school_id'=>$json_user_out['school_id']]
+		    ]);
             // $sikaku = $this->Qualification->find('all');
-            // $this->log(count($sikaku));
+            $this->log(count($sikaku));
             foreach($sikaku as $qualification){
                 $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
