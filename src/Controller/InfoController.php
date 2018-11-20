@@ -39,6 +39,7 @@ class InfoController extends AppController{
     }
 
     public function searchQualificationInfo($number){
+        $this->Qualification = TableRegistry::get('Qualification');
 		$qualification_info = $this->Qualification->find('all',[
 			    'condition'=>['school_id'=>$number]
 		]);
