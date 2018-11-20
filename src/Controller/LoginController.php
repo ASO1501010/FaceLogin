@@ -84,8 +84,11 @@ class LoginController extends AppController{
             $sikaku = $this->Qualification->find('all',[
 			    'condition'=>['school_id'=>$json_user_out['school_id']]
 		    ]);
+            $sikaku_cnt = $this->Qualification->find('count',[
+			    'condition'=>['school_id'=>$json_user_out['school_id']]
+		    ]);
             // $sikaku = $this->Qualification->find('all');
-            $this->log(count($sikaku));
+            $this->log($sikaku_cnt);
             foreach($sikaku as $qualification){
                 $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
