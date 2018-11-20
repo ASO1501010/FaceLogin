@@ -44,7 +44,6 @@ class LoginController extends AppController{
             $this->log(gettype($number));
             $this->log($similarity);
             $this->log(gettype($similarity));
-
             $infoController = new InfoController;
             $userInfo = $infoController->SearchUserInfo($number);
             $json_user_out = array();
@@ -69,6 +68,7 @@ class LoginController extends AppController{
             }
 
             $json_qualification_out = array();
+            $this->log(count($userInfo['qualification_info']));
             foreach($userInfo['qualification_info'] as $qualification){
                 $json_qualification_out += array('pass_date' => $qualification->pass_date, 'qualification_name' => $qualification->qualification_name);
             }
