@@ -94,7 +94,7 @@ class LoginController extends AppController{
             $cnt = 0;
             foreach($sikaku as $qualification){
                 $date = new Date(strval($qualification->pass_date));
-                $json_qualification_out = ['pass_date' => $date->format('Y-m-d'), 
+                $json_qualification_out[] = ['pass_date' => $date->format('Y-m-d'), 
                                            'qualification_name' => $qualification->qualification_name
                 ];
                 $json_qualification_out[$cnt++];
