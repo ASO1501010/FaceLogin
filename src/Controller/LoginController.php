@@ -50,7 +50,7 @@ class LoginController extends AppController{
             $json_user_out = array();
             //$return_number = 0;
             foreach($userInfo['base_info'] as $user){
-                $date = new Date(str_val($user->birthday));
+                $date = new Date(strval($user->birthday));
                 $json_user_out = ['level' => $user->level,
                              'school_id' => $user->school_id,
                              'name' => $user->first_name,
@@ -72,7 +72,7 @@ class LoginController extends AppController{
             $json_qualification_out = array();
             $this->log(count($userInfo['qualification_info']));
             foreach($userInfo['qualification_info'] as $qualification){
-                $date = new Date(str_val($qualification->pass_date));
+                $date = new Date(strval($qualification->pass_date));
                 $json_qualification_out += array('pass_date' => $date->format('Y-m-d'), 
                                                  'qualification_name' => $qualification->qualification_name
                                                  );
@@ -82,8 +82,8 @@ class LoginController extends AppController{
             $json_schedule_out = array();
             if(!(is_null($userInfo['schedule_info']))){
                 foreach($userInfo['schedule_info'] as $schedule){
-                    $start_date = new Date(str_val($schedule->start_date));
-                    $end_date = new Date(str_val($schedule->end_date));
+                    $start_date = new Date(strval($schedule->start_date));
+                    $end_date = new Date(strval($schedule->end_date));
                     $json_schedule_out = ['company' => $schedule->company,
                                           'start_date' => $start_date->format('Y-m-d'),
                                           'end_date' => $end_date->format('Y-m-d')
