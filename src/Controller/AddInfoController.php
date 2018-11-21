@@ -38,8 +38,10 @@ class AddInfoController extends AppController{
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
         $start_date = new Date($data['start_date']);
+        $this->log($start_date);
         //$start_date = $date_tmp->format('Y-m-d');
         $end_date = new Date($data['end_date']);
+        $this->log($end_date);
         //$end_date = $date_tmp->format('Y-m-d');
 
         $infoController = new InfoController;

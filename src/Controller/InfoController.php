@@ -101,8 +101,8 @@ class InfoController extends AppController{
                 'company'=>h($company),
 				// 'category'=>h($this->request->data['category']),
 				// 'content'=>h($this->request->data['content']),
-                'start_date'=>h($start),
-				'end_date'=>h($end),
+                'start_date'=>$start,
+				'end_date'=>$end,
 				// 'pass_flag'=>h($this->request->data['pass_flag']),
 				// 'attendance_flag'=>h($this->request->data['attendance_flag'])
             );
