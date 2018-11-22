@@ -89,10 +89,11 @@ class LoginController extends AppController{
         }
 
         $this->log(gettype($json_user_out['school_id']));
+        $number_tmp = $json_user_out['school_id'];
         
         $json_qualification_out = [];
         $sikaku = $this->Qualification->find('all',[
-			    'condition'=>['school_id'=>$json_user_out['school_id']]
+			    'condition'=>['Qualification.school_id'=>$number_tmp]
 		]);
         $this->log($sikaku->count());
         $cnt = 0;
