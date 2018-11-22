@@ -41,23 +41,17 @@ class LoginController extends AppController{
             $this->log($resultFile_name);
             $bucket_name = "face-results0921";
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-            if($result['@metadata']['statusCode'] == 200){
+            $json = $result->get('Body');
+            $data = (string)$json;
+            $content = json_decode($data, true);
+            if($result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
                 //$content = $result['Body']->getContents();
-                $json = $result->get('Body');
-                $data = (string)$json;
-                $content = json_decode($data, true);
-                $number = str_replace('.jpg', '', $content['FaceMatches'][0]['Face']['ExternalImageId']);
                 $similarity = $content['FaceMatches'][0]['Similarity'];
-                $this->log($number);
-                $this->log(gettype($number));
+                // $this->log($number);
+                // $this->log(gettype($number));
                 $this->log($similarity);
-                $this->log(gettype($similarity));
-                if($similarity > 70){
-                    $this->setInfo($number);
-                }else{
-                    header("Content-type: text/plain; charset=UTF-8");
-                    echo "login_failed";
-                }
+                $number = str_replace('.jpg', '', $content['FaceMatches'][0]['Face']['ExternalImageId']);
+                $this->setInfo($number);
             }else{
                 header("Content-type: text/plain; charset=UTF-8");
                 echo "login_failed";
@@ -94,6 +88,8 @@ class LoginController extends AppController{
             $this->log($user->number);
         }
 
+        $this->log($json_user_out['school_id']);
+        
         $json_qualification_out = [];
         $sikaku = $this->Qualification->find('all',[
 			    'condition'=>['school_id'=>$json_user_out['school_id']]
