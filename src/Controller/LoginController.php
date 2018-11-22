@@ -41,6 +41,7 @@ class LoginController extends AppController{
             $this->log($resultFile_name);
             $bucket_name = "face-results0921";
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
+            if($result['@metadata']['statusCode'] == 200){
             //$content = $result['Body']->getContents();
             $json = $result->get('Body');
             $data = (string)$json;
@@ -51,13 +52,27 @@ class LoginController extends AppController{
             $this->log(gettype($number));
             $this->log($similarity);
             $this->log(gettype($similarity));
-            $infoController = new InfoController;
-            $userInfo = $infoController->searchUserInfo($number);
-            $json_user_out = array();
-            //$return_number = 0;
-            foreach($userInfo['base_info'] as $user){
-                $date = new Date(strval($user->birthday));
-                $json_user_out = ['level' => $user->level,
+            if($similarity > 70){
+                $this->setInfo($number);
+            }else{
+                header("Content-type: text/plain; charset=UTF-8");
+                echo "login_failed";
+            }
+        }else{
+            $this->log($result['@metadata']['statusCode']);
+            header("Content-type: text/plain; charset=UTF-8");
+            echo "login_failed";
+        }
+    }
+
+    public function setInfo($number){
+        $infoController = new InfoController;
+        $userInfo = $infoController->searchUserInfo($number);
+        $json_user_out = array();
+        //$return_number = 0;
+        foreach($userInfo['base_info'] as $user){
+            $date = new Date(strval($user->birthday));
+            $json_user_out = ['level' => $user->level,
                              'school_id' => $user->school_id,
                              'name' => $user->first_name,
                              'kana' => $user->first_name_kana,
@@ -70,85 +85,41 @@ class LoginController extends AppController{
                              'home_number' => $user->tel,
                              'mail_address' => $user->mail,
                              'teacher' => $user->teacher
-                ];
-                //$return_number = $user->number;
-                $this->log($user->number);
-            }
-
-            $json_qualification_out = [];
-            // $sikaku = $infoController->searchQualificationInfo($json_user_out['school_id']);
-            // $this->log($sikaku);
-            // $this->log(gettype($userInfo['qualification_info']));
-            // $this->log(count($userInfo['qualification_info']));
-            // $this->Qualification = TableRegistry::get('Qualification');
-            // $this->set('entity', $this->Qualification->newEntity());
-            $sikaku = $this->Qualification->find('all',[
-			    'condition'=>['school_id'=>$json_user_out['school_id']]
-		    ]);
-            // $sikaku_cnt = $this->Qualification->find('count',[
-			//     'condition'=>['school_id'=>$json_user_out['school_id']]
-		    // ]);
-            //$sikaku = $this->Qualification->find('all');
-            $this->log($sikaku->count());
-            //var_dump($sikaku);
-            $cnt = 0;
-            foreach($sikaku as $qualification){
-                $date = new Date(strval($qualification->pass_date));
-                $json_qualification_out[] = ['pass_date' => $date->format('Y-m-d'), 
-                                           'qualification_name' => $qualification->qualification_name
-                ];
-                $json_qualification_out[$cnt++];
-            }
-            $this->log($json_qualification_out);
-
-            $json_schedule_out = [];
-            if(!(is_null($userInfo['schedule_info']))){
-                foreach($userInfo['schedule_info'] as $schedule){
-                    $start_date = new Date(strval($schedule->start_date));
-                    $end_date = new Date(strval($schedule->end_date));
-                    $json_schedule_out[] = ['start_date' => $start_date->format('Y-m-d'),
-                                          'end_date' => $end_date->format('Y-m-d'),
-                                          'company' => $schedule->company
-                                         ];
-                }
-            }
-
-
-            header("Content-type: application/json; charset=UTF-8");
-            echo json_encode($json_user_out, JSON_UNESCAPED_UNICODE);
-            echo json_encode($json_qualification_out, JSON_UNESCAPED_UNICODE);
-            echo json_encode($json_schedule_out, JSON_UNESCAPED_UNICODE);
-            //$content = (array)$stdclass;
-            // $data = $result['Body'];
-            // $this->log($data);
-            // $content = $data->getContents();
-            //$this->log($content['FaceMatches']['Face']['ExternalImageId']);
-            //$this->log(is_array($content));
-            // $this->log($content);
-            // $this->log(gettype($content));
-            //$json = json_decode($content);
-            // $this->log($content);
-            // if(is_array($content) && is_string($content)){
-            //     $this->log("jsonです");
-            // }else{
-            //     $this->log("jsonではない");
-            // }
-            //$data = (string)$content;
-            // $this->log($result['Body']);
-            // if(is_null($result['Body'])){
-            //     $this->log("nullです");
-            // }else{
-            //     $this->log("nullではない");
-            //     $this->log($result['Body']);
-            // }
-            //$result_json = json_decode($result, true);
-            // $this->log(gettype($result_json));
-            //$this->log($data['FaceMatches']['Face']['ExternalImageId']);
-            //$this->log(is_json($json));
-            //$this->log(gettype($json));
-            //$this->log($json['FaceMatches']['Face']['ExternalImageId']);
-            //$this->log($content['FaceMatches'][0]['Face']['ExternalImageId']);
-            //$this->log($content[1]);
+            ];
+            //$return_number = $user->number;
+            $this->log($user->number);
         }
+
+        $json_qualification_out = [];
+        $sikaku = $this->Qualification->find('all',[
+			    'condition'=>['school_id'=>$json_user_out['school_id']]
+		]);
+        $this->log($sikaku->count());
+        $cnt = 0;
+        foreach($sikaku as $qualification){
+            $date = new Date(strval($qualification->pass_date));
+            $json_qualification_out[] = ['pass_date' => $date->format('Y-m-d'), 
+                                         'qualification_name' => $qualification->qualification_name
+            ];
+            $json_qualification_out[$cnt++];
+        }
+        $this->log($json_qualification_out);
+
+        $json_schedule_out = [];
+        if(!(is_null($userInfo['schedule_info']))){
+            foreach($userInfo['schedule_info'] as $schedule){
+                $start_date = new Date(strval($schedule->start_date));
+                $end_date = new Date(strval($schedule->end_date));
+                $json_schedule_out[] = ['start_date' => $start_date->format('Y-m-d'),
+                                        'end_date' => $end_date->format('Y-m-d'),
+                                        'company' => $schedule->company
+                ];
+            }
+        }
+
+        header("Content-type: application/json; charset=UTF-8");
+        echo json_encode($json_user_out, JSON_UNESCAPED_UNICODE);
+        echo json_encode($json_qualification_out, JSON_UNESCAPED_UNICODE);
+        echo json_encode($json_schedule_out, JSON_UNESCAPED_UNICODE);
     }
 }
