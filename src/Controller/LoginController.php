@@ -41,10 +41,10 @@ class LoginController extends AppController{
             $this->log($resultFile_name);
             $bucket_name = "face-results0921";
             $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-            $json = $result->get('Body');
-            $data = (string)$json;
-            $content = json_decode($data, true);
-            if($result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
+            if($result != null && $result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
+                $json = $result->get('Body');
+                $data = (string)$json;
+                $content = json_decode($data, true);
                 //$content = $result['Body']->getContents();
                 $similarity = $content['FaceMatches'][0]['Similarity'];
                 // $this->log($number);
