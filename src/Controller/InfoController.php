@@ -26,10 +26,10 @@ class InfoController extends AppController{
 		]);
         foreach($res['base_info'] as $user){
 		    $res['qualification_info'] = $this->Qualification->find('all',[
-			    'condition'=>['school_id = '=>11]
+			    'conditions'=>['school_id'=>$user->school_id]
 		    ]);
 		    $res['schedule_info'] = $this->Schedule->find('all',[
-			    'condition'=>['school_id'=>$user->school_id]
+			    'conditions'=>['school_id'=>$user->school_id]
 		    ]);
         }
 
