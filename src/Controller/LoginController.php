@@ -102,7 +102,7 @@ class LoginController extends AppController{
             $json_qualification_out[] = ['pass_date' => $date->format('Y-m-d'), 
                                          'qualification_name' => $qualification->qualification_name
             ];
-            $json_qualification_out[$cnt++];
+            //$json_qualification_out[$cnt++];
         }
         $this->log($json_qualification_out);
 
