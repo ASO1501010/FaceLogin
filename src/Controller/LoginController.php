@@ -35,7 +35,7 @@ class LoginController extends AppController{
         $file_name = uniqid().".jpg";
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
-        //sleep(2);
+        sleep(2);
         //$this->log($result);
         if($result['@metadata']['statusCode'] == 200){
             $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
@@ -58,7 +58,6 @@ class LoginController extends AppController{
                 $number = str_replace('.jpg', '', $content['FaceMatches'][0]['Face']['ExternalImageId']);
                 $this->setInfo($number);
             }else{
-                $this->log('tag1');
                 header("Content-type: text/plain; charset=UTF-8");
                 echo "login_failed";
             }
