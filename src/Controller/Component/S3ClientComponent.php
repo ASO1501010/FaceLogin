@@ -110,7 +110,8 @@ class S3ClientComponent extends Component
 
             return $result;
         } catch (S3Exception $e) {
-            echo $e->getMessage();
+            $this->log($e->getMessage());
+            return null;
         }
     }
 

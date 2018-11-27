@@ -41,13 +41,7 @@ class LoginController extends AppController{
             $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
             $this->log($resultFile_name);
             $bucket_name = "face-results0921";
-            try{
-                $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
-                //$this->log($result);
-            }catch(Exception $e){
-                $this->log('エラー');
-                $result = null;
-            }
+            $result = $this->S3Client->getFile($resultFile_name, $bucket_name);
             if($result != null){
                 $json = $result->get('Body');
                 $data = (string)$json;
@@ -55,7 +49,7 @@ class LoginController extends AppController{
 
                 $this->S3Client->deleteFile($resultFile_name, $bucket_name);
             }
-            if($result != '' && $result != null && $result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
+            if($result != null && $result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
                 //$content = $result['Body']->getContents();
                 $similarity = $content['FaceMatches'][0]['Similarity'];
                 // $this->log($number);
