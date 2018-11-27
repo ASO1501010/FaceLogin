@@ -48,8 +48,6 @@ class LoginController extends AppController{
                 $data = (string)$json;
                 $content = json_decode($data, true);
 
-                $this->log($content);
-
                 $this->S3Client->deleteFile($resultFile_name, $bucket_name);
             }
             if($result != null && $result['@metadata']['statusCode'] == 200 && $content['FaceMatches'] != null){
@@ -61,6 +59,7 @@ class LoginController extends AppController{
                 $number = str_replace('.jpg', '', $content['FaceMatches'][0]['Face']['ExternalImageId']);
                 $this->setInfo($number);
             }else{
+                $this->log('tag1');
                 header("Content-type: text/plain; charset=UTF-8");
                 echo "login_failed";
             }
