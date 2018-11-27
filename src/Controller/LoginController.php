@@ -36,7 +36,7 @@ class LoginController extends AppController{
         $bucket_name = "face-images0921";
         $result=$this->S3Client->putFile($face, $file_name, $bucket_name);
         //sleep(2);
-        $this->log($result);
+        //$this->log($result);
         if($result['@metadata']['statusCode'] == 200){
             $resultFile_name = "log_".str_replace('.', '_', $file_name).".json";
             $this->log($resultFile_name);
@@ -47,6 +47,8 @@ class LoginController extends AppController{
                 $json = $result->get('Body');
                 $data = (string)$json;
                 $content = json_decode($data, true);
+
+                $this->log($content);
 
                 $this->S3Client->deleteFile($resultFile_name, $bucket_name);
             }
