@@ -46,7 +46,7 @@ class LoginController extends AppController{
                 //$this->log($result);
             }catch(Exception $e){
                 $this->log('エラー');
-                //$result = null;
+                $result = null;
             }
             if($result != null){
                 $json = $result->get('Body');
