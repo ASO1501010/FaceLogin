@@ -9,7 +9,7 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
-use App\Controller\InfoController;
+use App\Controller\DBController;
 
 class PictureController extends AppController{
     public function initialize(){
@@ -50,8 +50,8 @@ class PictureController extends AppController{
         $this->log($data['name']);
         $this->log(gettype($data['name']));
 
-        $infoController = new InfoController;
-        $infoController->addUser(intval($data['number']), $data['name'], intval($data['level']));
+        $DBController = new DBController;
+        $DBController->addUser(intval($data['number']), $data['name'], intval($data['level']));
     }
 
     public function face(){

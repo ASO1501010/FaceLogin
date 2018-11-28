@@ -10,7 +10,7 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
-use App\Controller\InfoController;
+use App\Controller\DBController;
 
 class AddInfoController extends AppController{
     public function initialize(){
@@ -29,8 +29,8 @@ class AddInfoController extends AppController{
         $pass_date = new Date($data['pass_date']);
         //$pass_date = $pass_date_tmp->format('Y-m-d');
 
-        $infoController = new InfoController;
-        $infoController->addQualification(intval($data['school_id']), $data['qualification_name'], $pass_date);
+        $DBController = new DBController;
+        $DBController->addQualification(intval($data['school_id']), $data['qualification_name'], $pass_date);
     }
 
     public function addSchedule(){
@@ -44,7 +44,7 @@ class AddInfoController extends AppController{
         $this->log($end_date);
         //$end_date = $date_tmp->format('Y-m-d');
 
-        $infoController = new InfoController;
-        $infoController->addSchedule(intval($data['school_id']), $data['company'], $start_date, $end_date);
+        $DBController = new DBController;
+        $DBController->addSchedule(intval($data['school_id']), $data['company'], $start_date, $end_date);
     }
 }

@@ -13,7 +13,7 @@ use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\S3ClientComponent;
-use App\Controller\InfoController;
+use App\Controller\DBController;
 
 class LoginController extends AppController{
     public function initialize(){
@@ -70,8 +70,8 @@ class LoginController extends AppController{
     }
 
     public function setInfo($number){
-        $infoController = new InfoController;
-        $userInfo = $infoController->searchUserInfo($number);
+        $DBController = new DBController;
+        $userInfo = $DBController->searchUserInfo($number);
         $json_user_out = array();
         //$return_number = 0;
         foreach($userInfo['base_info'] as $user){
