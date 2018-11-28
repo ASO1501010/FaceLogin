@@ -9,7 +9,7 @@ use Cake\I18n\FrozenDate;
 use \Exception;
 use Cake\Log\Log;
 
-class InfoController extends AppController{
+class DBController extends AppController{
     public function initialize(){
         FrozenDate::setToStringFormat('yyyy/MM/dd');
 	    $this->viewBuilder()->enableAutoLayout(false);
