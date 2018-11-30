@@ -76,6 +76,11 @@ class LoginController extends AppController{
         //$return_number = 0;
         foreach($userInfo['base_info'] as $user){
             $date = new Date(strval($user->birthday));
+            if($user->sex == 0){
+                $sex = "男";
+            }else{
+                $sex = "女";
+            }
             $json_user_out = ['level' => $user->level,
                              'school_id' => $user->school_id,
                              'name' => $user->first_name,
@@ -84,7 +89,7 @@ class LoginController extends AppController{
                              'address' => $user->address,
                              'home_address' => $user->home_address,
                              'birthday' => $date->format('Y-m-d'),
-                             'sex' => $user->sex,
+                             'sex' => $sex,
                              'phone_number' => $user->phone,
                              'home_number' => $user->tel,
                              'mail_address' => $user->mail,

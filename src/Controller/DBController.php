@@ -59,16 +59,26 @@ class DBController extends AppController{
         $this->School->save($this->School->newEntity($data));
     }
 
-    public function editUserInfo(){
-        if($this->request->is('post')){
-           try{
-               $entity = $this->Schools->get($this->request->data['id']);
-               $this->Schools->patchEntity($entity, $this->request->data);
-               $this->Schools->save($entity);
-           }catch(Exception $e){
-               Log::write('debug', $e->getMessage());
-           }
-        }
+    public function editUserInfo($id, $name, $kana, $number, $address, $home, 
+                                 $birthday, $sex, $phone, $tel, $mail, $teacher){
+        $usersTable = TableRegistry::get('School');
+        $user = $usersTable->get($id);
+        $user->number = $number;
+        $user->first_name = $name;
+        $user->first_name_kana = $kana;
+        $user->address = $address;
+        $user->home_address = $home;
+        $user->birthday = $birthday;
+        $user->sex = $sex;
+        $user->phone = $phone;
+        $user->tel = $tel;
+        $user->mail = $mail;
+        $user->teacher = $teacher;
+
+        $usersTable->save($user);
+        // $entity = $this->Schools->get($this->request->data['id']); //更新処理の変更
+        // $this->Schools->patchEntity($entity, $this->request->data);
+        // $this->Schools->save($entity);
     }
 
     public function addQualification($school_id, $name, $pass_date){

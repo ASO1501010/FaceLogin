@@ -47,4 +47,22 @@ class InfoController extends AppController{
         $DBController = new DBController;
         $DBController->addSchedule(intval($data['school_id']), $data['company'], $start_date, $end_date);
     }
+
+    public function editUserInfo(){
+        $this->autoRender = false;
+        $json = file_get_contents("php://input");
+        $data = json_decode($json, true);
+        $birthday = new Date($data['birthday']);
+        if($data['sex'] == "男"){
+            $sex = 0;
+        }else{
+            $sex = 1;
+        }
+        //$pass_date = $pass_date_tmp->format('Y-m-d');
+
+        $DBController = new DBController;
+        $DBController->editUserInfo(intval($data['school_id']), $data['name'], $data['kana'], intval($data['number']), $data['address'],
+                                    $data['home_address'], $birthday, $sex, intval($data['phone_number']), intval($data['home_number']),
+                                    $data['mailaddress'], $data['teacher']);
+    }
 }
