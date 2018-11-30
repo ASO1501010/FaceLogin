@@ -63,6 +63,6 @@ class InfoController extends AppController{
         $DBController = new DBController;
         $DBController->editUserInfo(intval($data['school_id']), $data['name'], $data['kana'], intval($data['number']), $data['address'],
                                     $data['home_address'], $birthday, $sex, intval($data['phone_number']), intval($data['home_number']),
-                                    $data['mailaddress'], $data['teacher']);
+                                    $data['mail_address'], $data['teacher']);
     }
 }

@@ -50,8 +50,18 @@ class PictureController extends AppController{
         $this->log($data['name']);
         $this->log(gettype($data['name']));
 
+        $birthday = new Date($data['birthday']);
+        if($data['sex'] == "男"){
+            $sex = 0;
+        }else{
+            $sex = 1;
+        }
+
         $DBController = new DBController;
-        $DBController->addUser(intval($data['number']), $data['name'], intval($data['level']));
+        $DBController->addUser(intval($data['number']), $data['name'], $data['kana'], intval($data['number']), $data['address'],
+                                $data['home_address'], $birthday, $sex, intval($data['phone_number']), intval($data['home_number']),
+                                $data['mail_address'], $data['teacher'], intval($data['level']));
+
     }
 
     public function face(){

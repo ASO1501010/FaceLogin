@@ -50,11 +50,21 @@ class DBController extends AppController{
 		// echo json_encode($res, JSON_UNESCAPED_UNICODE);
     }
 
-    public function addUser($number, $username, $level){
+    public function addUser($number, $username, $kana, $number, $address, $home, 
+                            $birthday, $sex, $phone, $tel, $mail, $teacher, $level){
         $data = array(
-			'number'=>h($number),
+			'number'=>$number,
             'first_name'=>h($username),
-            'level'=>h($level),
+            'first_name_kana'=>h($kana),
+            'address'=>h($address),
+            'home_address'=>h($home),
+            'birthday'=>$birthday,
+            'sex'=>$sex,
+            'phone'=>$phone,
+            'tel'=>$tel,
+            'mail'=>$mail,
+            'teacher'=>$teacher,
+            'level'=>h($level)
         );
         $this->School->save($this->School->newEntity($data));
     }
