@@ -58,7 +58,7 @@ class PictureController extends AppController{
         }
 
         $DBController = new DBController;
-        $DBController->addUser(intval($data['number']), $data['name'], $data['kana'], intval($data['number']), $data['address'],
+        $DBController->addUser(intval($data['number']), $data['name'], $data['kana'], $data['address'],
                                 $data['home_address'], $birthday, $sex, intval($data['phone_number']), intval($data['home_number']),
                                 $data['mail_address'], $data['teacher'], intval($data['level']));
 

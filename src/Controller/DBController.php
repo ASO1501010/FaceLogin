@@ -50,7 +50,7 @@ class DBController extends AppController{
 		// echo json_encode($res, JSON_UNESCAPED_UNICODE);
     }
 
-    public function addUser($number, $username, $kana, $number, $address, $home, 
+    public function addUser($number, $username, $kana, $address, $home, 
                             $birthday, $sex, $phone, $tel, $mail, $teacher, $level){
         $data = array(
 			'number'=>$number,
