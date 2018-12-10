@@ -53,7 +53,7 @@ class InfoController extends AppController{
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
         $birthday = new Date($data['birthday']);
-        if($data['sex'] == "男"){
+        if($data['sex'] == "男性"){
             $sex = 0;
         }else{
             $sex = 1;
