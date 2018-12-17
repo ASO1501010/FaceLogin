@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use \Exception;
 use Cake\Log\Log;
 
@@ -51,7 +52,7 @@ class PictureController extends AppController{
         $this->log(gettype($data['name']));
 
         $birthday = new Date($data['birthday']);
-        if($data['sex'] == "男"){
+        if($data['sex'] == "男性"){
             $sex = 0;
         }else{
             $sex = 1;
