@@ -61,7 +61,7 @@ class LoginController extends AppController{
                 header("Content-type: text/plain; charset=UTF-8");
                 echo "login_failed";
             }
-            //$this->S3Client->deleteFile($file_name, "face-images0921");
+            $this->S3Client->deleteFile($file_name, "face-images0921");
         }else{
             $this->log($result['@metadata']['statusCode']);
             header("Content-type: text/plain; charset=UTF-8");
